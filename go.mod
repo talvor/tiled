@@ -1,12 +1,10 @@
 module github.com/talvor/tiled
 
-go 1.23.6
+go 1.23
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.8.7
 	github.com/pkg/errors v0.9.1
-	github.com/talvor/tmx v0.0.0-20250328100534-7fc71368552b
-	github.com/talvor/tsx v0.0.0-20250328104347-b690b54b49ee
 )
 
 require (
