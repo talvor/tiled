@@ -59,6 +59,36 @@ func (ts *Tileset) GetTileByType(tileType string) (*Tile, error) {
 	return nil, ErrTileTypeNotFound
 }
 
+func (ts *Tileset) GetTileByID(tileID uint32) (*Tile, error) {
+	for _, t := range ts.Tiles {
+		if t.ID == tileID {
+			return &t, nil
+		}
+	}
+
+	return nil, ErrTileIDOutOfBounds
+}
+
+func (ts *Tileset) TileHasAnimation(tileID uint32) bool {
+	for _, t := range ts.Tiles {
+		if t.ID == tileID && len(t.Animation.Frames) > 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (ts *Tileset) GetTileAnimation(tileID uint32) (*Animation, error) {
+	for _, t := range ts.Tiles {
+		if t.ID == tileID {
+			return &t.Animation, nil
+		}
+	}
+
+	return nil, ErrTileIDOutOfBounds
+}
+
 func (ts *Tileset) decodeImage() {
 	if ts.Image.Source == "" {
 		return
@@ -85,5 +115,5 @@ type Animation struct {
 
 type Frame struct {
 	ID       uint32 `xml:"tileid,attr"`
-	Duration string `xml:"duration,attr"`
+	Duration int    `xml:"duration,attr"`
 }

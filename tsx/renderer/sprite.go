@@ -13,6 +13,7 @@ var (
 	ErrInvalidIdType     = errors.New("invalid id type")
 	ErrTileset           = errors.New("error loading tileset")
 	ErrNoAmimationFrames = errors.New("no animation frames")
+	ErrNoComplexPart     = errors.New("no part found for complex sprite")
 )
 
 type DrawOptions struct {
@@ -24,9 +25,10 @@ type DrawOptions struct {
 
 type SpriteDrawer interface {
 	Draw(id interface{}, opts *DrawOptions) error
-	DrawWithAnimation(name string, duration int, opts *DrawOptions) error
 }
 
+// A simple sprite is a sprite that is made up of a single tileset
+// and can be drawn with a single tile id
 type SimpleSprite struct {
 	Tileset  string
 	Renderer *Renderer
@@ -55,6 +57,8 @@ func (ss *SimpleSprite) DrawWithAnimation(name string, duration int, opts *DrawO
 	return drawSpriteWithAnimation(ss.Tileset, name, duration, ss.Renderer, opts)
 }
 
+// A compound sprite is a sprite that is made up of multiple tilesets
+// and can be drawn with a single tile id
 type CompoundSprite struct {
 	Tilesets []string
 	Renderer *Renderer
@@ -97,6 +101,74 @@ func (cs *CompoundSprite) DrawWithAnimation(name string, duration int, opts *Dra
 	for _, tileset := range cs.Tilesets {
 		if err := drawSpriteWithAnimation(tileset, name, duration, cs.Renderer, opts); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+// A complex sprite has multiple parts that can be drawn with a single tile id
+type ComplexSprite struct {
+	Tileset  string
+	Parts    map[uint32][]uint32
+	Columns  int
+	Renderer *Renderer
+}
+
+func NewComplexSprite(tileSet string, columns int, renderer *Renderer) *ComplexSprite {
+	parts := make(map[uint32][]uint32)
+	return &ComplexSprite{
+		Tileset:  tileSet,
+		Parts:    parts,
+		Columns:  columns,
+		Renderer: renderer,
+	}
+}
+
+func (cs *ComplexSprite) AddPart(id uint32, parts []uint32) {
+	cs.Parts[id] = parts
+}
+
+func (cs *ComplexSprite) Draw(id interface{}, opts *DrawOptions) error {
+	ts, err := cs.Renderer.TilesetManager.GetTilesetByName(cs.Tileset)
+	if err != nil {
+		return fmt.Errorf("failed to find tileset with name %s: %w", cs.Tileset, ErrTileset)
+	}
+
+	tileId := uint32(0)
+	switch id.(type) {
+	case int:
+		tileId = uint32(id.(int))
+	case uint32:
+		tileId = id.(uint32)
+	default:
+		return ErrInvalidIdType
+	}
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Concat(opts.Op.GeoM)
+	drawOptions := &DrawOptions{
+		Screen:         opts.Screen,
+		Op:             op,
+		FlipHorizontal: opts.FlipHorizontal,
+		FlipVertical:   opts.FlipVertical,
+	}
+
+	parts, ok := cs.Parts[tileId]
+	if !ok {
+		return ErrNoComplexPart
+	}
+
+	dx := float64(0)
+	for idx, part := range parts {
+		if err := drawSpriteByID(cs.Tileset, part, cs.Renderer, drawOptions); err != nil {
+			return err
+		}
+		if (idx+1)%cs.Columns == 0 {
+			drawOptions.Op.GeoM.Translate(-dx, float64(ts.TileHeight))
+			dx = 0
+		} else {
+			drawOptions.Op.GeoM.Translate(float64(ts.TileWidth), 0)
+			dx += float64(ts.TileWidth)
 		}
 	}
 	return nil

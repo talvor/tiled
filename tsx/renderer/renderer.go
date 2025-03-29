@@ -2,6 +2,7 @@ package renderer
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -48,6 +49,35 @@ func (er *Renderer) DrawTilesetByName(name string, screen *ebiten.Image, op *ebi
 }
 
 func (er *Renderer) DrawTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
+	if ts.TileHasAnimation(tileId) {
+		return er.DrawAnimatedTile(ts, tileId, opts)
+	}
+	return er.drawTile(ts, tileId, opts)
+}
+
+func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts *DrawOptions) error {
+	ts, err := er.TilesetManager.GetTilesetBySource(tilesetSource)
+	if err != nil {
+		return err
+	}
+
+	return er.DrawTile(ts, tileId, opts)
+}
+
+func (er *Renderer) DrawAnimatedTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
+	anim, err := ts.GetTileAnimation(tileId)
+	if err != nil {
+		return err
+	}
+
+	duration := anim.Frames[0].Duration
+
+	animationIdx := int(time.Now().UnixMilli()) / int(duration) % len(anim.Frames)
+	frame := anim.Frames[animationIdx]
+	return er.drawTile(ts, frame.ID, opts)
+}
+
+func (er *Renderer) drawTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
 	img, err := er.loadTilesetImage(ts)
 	if err != nil {
 		return err
@@ -63,15 +93,6 @@ func (er *Renderer) DrawTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) 
 	opts.Screen.DrawImage(img, opts.Op)
 
 	return nil
-}
-
-func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts *DrawOptions) error {
-	ts, err := er.TilesetManager.GetTilesetBySource(tilesetSource)
-	if err != nil {
-		return err
-	}
-
-	return er.DrawTile(ts, tileId, opts)
 }
 
 func (er *Renderer) loadTilesetImage(ts *tsx.Tileset) (*ebiten.Image, error) {
