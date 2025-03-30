@@ -11,7 +11,7 @@ import (
 
 func main() {
 	homeDir, _ := os.UserHomeDir()
-	tilesetPath := path.Join(homeDir, "Documents/examples/tilesets/NinjaDark.tsx")
+	tilesetPath := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tilesets/Waterfall/Waterfall_1.tsx")
 
 	tileset, err := tsx.LoadFile(tilesetPath)
 	if err != nil {

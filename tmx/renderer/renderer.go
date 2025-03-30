@@ -40,10 +40,12 @@ func (r *Renderer) DrawMapLayer(mapName string, layerName string, screen *ebiten
 		posX, posY := layer.GetTilePositionFromIndex(idx, m)
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(posX), float64(posY))
-		r.TsxRenderer.DrawTileWithSource(ts.Source, uint32(id), &tsxrenderer.DrawOptions{
+		if err := r.TsxRenderer.DrawTileWithSource(ts.Source, uint32(id), &tsxrenderer.DrawOptions{
 			Screen: screen,
 			Op:     op,
-		})
+		}); err != nil {
+			return err
+		}
 	}
 	return nil
 }

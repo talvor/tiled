@@ -17,8 +17,8 @@ var tmxr *tmxrenderer.Renderer
 
 func init() {
 	homeDir, _ := os.UserHomeDir()
-	tilesetsDir := path.Join(homeDir, "Documents/examples/tilesets")
-	mapsDir := path.Join(homeDir, "Documents/examples/maps")
+	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tilesets")
+	mapsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/maps")
 
 	tm := tsx.NewTilesetManager(tilesetsDir)
 	mm := tmx.NewMapManager(mapsDir)
@@ -36,9 +36,9 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 
-	tmxr.DrawMapLayer("StartScene", "background", screen)
-	tmxr.DrawMapLayer("StartScene", "bottom", screen)
-	tmxr.DrawMapLayer("StartScene", "top", screen)
+	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "background", screen))
+	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "bottom", screen))
+	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "top", screen))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

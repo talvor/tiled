@@ -13,7 +13,6 @@ var (
 )
 
 type TilesetManager struct {
-	BaseDir  string
 	Tilesets map[string]*Tileset
 	IsLoaded bool
 }
@@ -53,6 +52,10 @@ func (tm *TilesetManager) AddTileset(source string) error {
 	return nil
 }
 
+func (tm *TilesetManager) LoadTilesetsFromDir(dir string) {
+	loadTilesets(tm, dir)
+}
+
 func (tm *TilesetManager) DebugPrintTilesets() {
 	for name := range tm.Tilesets {
 		fmt.Println(name)
@@ -61,18 +64,17 @@ func (tm *TilesetManager) DebugPrintTilesets() {
 
 func NewTilesetManager(baseDir string) *TilesetManager {
 	tm := &TilesetManager{
-		BaseDir:  baseDir,
 		Tilesets: make(map[string]*Tileset),
 		IsLoaded: false,
 	}
 
-	loadTilesets(tm)
+	loadTilesets(tm, baseDir)
 
 	return tm
 }
 
-func loadTilesets(tm *TilesetManager) {
-	tsxFiles, err := findTSXFiles(tm.BaseDir)
+func loadTilesets(tm *TilesetManager, baseDir string) {
+	tsxFiles, err := findTSXFiles(baseDir)
 	if err != nil {
 		return
 	}
