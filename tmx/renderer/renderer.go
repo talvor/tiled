@@ -18,7 +18,7 @@ func NewRenderer(mm *tmx.MapManager, tsxRenderer *tsxrenderer.Renderer) *Rendere
 	}
 }
 
-func (r *Renderer) DrawMapLayer(mapName string, layerName string, screen *ebiten.Image) error {
+func (r *Renderer) DrawMapLayer(mapName string, layerName string, opts *DrawOptions) error {
 	m, err := r.MapManager.GetMapByName(mapName)
 	if err != nil {
 		return err
@@ -30,18 +30,19 @@ func (r *Renderer) DrawMapLayer(mapName string, layerName string, screen *ebiten
 	}
 
 	for idx, tileId := range layer.Tiles {
-		// for i := 0; i < 500; i++ {
-		// tileId := layer.Tiles[i]
 		ts, id := m.DecodeTileGID(tileId)
 		if ts == nil {
 			continue
 		}
 
 		posX, posY := layer.GetTilePositionFromIndex(idx, m)
+
 		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Concat(opts.Op.GeoM)
 		op.GeoM.Translate(float64(posX), float64(posY))
+
 		if err := r.TsxRenderer.DrawTileWithSource(ts.Source, uint32(id), &tsxrenderer.DrawOptions{
-			Screen: screen,
+			Screen: opts.Screen,
 			Op:     op,
 		}); err != nil {
 			return err

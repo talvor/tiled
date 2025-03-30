@@ -39,10 +39,15 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
+	op := &ebiten.DrawImageOptions{}
 
-	panicOnError(tmxr.DrawMapLayer("GameScene", "background", screen))
-	panicOnError(tmxr.DrawMapLayer("GameScene", "bottom", screen))
-	panicOnError(tmxr.DrawMapLayer("GameScene", "top", screen))
+	opts := &tmxrenderer.DrawOptions{
+		Screen: screen,
+		Op:     op,
+	}
+	panicOnError(tmxr.DrawMapLayer("GameScene", "background", opts))
+	panicOnError(tmxr.DrawMapLayer("GameScene", "bottom", opts))
+	panicOnError(tmxr.DrawMapLayer("GameScene", "top", opts))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
