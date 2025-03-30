@@ -30,6 +30,10 @@ func (mm *MapManager) GetMapByName(name string) (*Map, error) {
 	return nil, ErrMapNotFound
 }
 
+func (mm *MapManager) LoadMapsFromDir(dir string) {
+	loadMaps(mm, dir)
+}
+
 func (mm *MapManager) DebugPrintMaps() {
 	for name := range mm.Maps {
 		fmt.Println(name)
@@ -43,15 +47,15 @@ func NewMapManager(baseDir string) (*MapManager, error) {
 		IsLoaded: false,
 	}
 
-	if err := LoadMaps(mm); err != nil {
+	if err := loadMaps(mm, baseDir); err != nil {
 		return nil, err
 	}
 
 	return mm, nil
 }
 
-func LoadMaps(mm *MapManager) error {
-	tsxFiles, err := findTMXFiles(mm.baseDir)
+func loadMaps(mm *MapManager, baseDir string) error {
+	tsxFiles, err := findTMXFiles(baseDir)
 	if err != nil {
 		return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
 	}

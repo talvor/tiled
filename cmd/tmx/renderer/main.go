@@ -17,11 +17,15 @@ var tmxr *tmxrenderer.Renderer
 
 func init() {
 	homeDir, _ := os.UserHomeDir()
-	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tilesets")
+	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tiles")
 	mapsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/maps")
 
-	tm := tsx.NewTilesetManager(tilesetsDir)
-	mm := tmx.NewMapManager(mapsDir)
+	tm, err := tsx.NewTilesetManager(tilesetsDir)
+	panicOnError(err)
+	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/outdoor_decorations/"))
+
+	mm, err := tmx.NewMapManager(mapsDir)
+	panicOnError(err)
 
 	tsxr := tsxrenderer.NewRenderer(tm)
 	tmxr = tmxrenderer.NewRenderer(mm, tsxr)
@@ -36,9 +40,9 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 
-	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "background", screen))
-	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "bottom", screen))
-	panicOnError(tmxr.DrawMapLayer("TerrainSetsTest", "top", screen))
+	panicOnError(tmxr.DrawMapLayer("GameScene", "background", screen))
+	panicOnError(tmxr.DrawMapLayer("GameScene", "bottom", screen))
+	panicOnError(tmxr.DrawMapLayer("GameScene", "top", screen))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

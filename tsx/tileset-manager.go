@@ -27,7 +27,7 @@ func (tm *TilesetManager) GetTilesetBySource(source string) (*Tileset, error) {
 			return ts, nil
 		}
 	}
-	return nil, ErrTilesetNotFound
+	return nil, fmt.Errorf("source: %s %w", source, ErrTilesetNotFound)
 }
 
 func (tm *TilesetManager) GetTilesetByName(name string) (*Tileset, error) {
@@ -36,7 +36,7 @@ func (tm *TilesetManager) GetTilesetByName(name string) (*Tileset, error) {
 	}
 
 	if _, ok := tm.Tilesets[name]; !ok {
-		return nil, ErrTilesetNotFound
+		return nil, fmt.Errorf("name: %s %w", name, ErrTilesetNotFound)
 	}
 
 	return tm.Tilesets[name], nil
