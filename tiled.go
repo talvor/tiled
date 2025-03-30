@@ -7,14 +7,25 @@ import (
 	tsxrenderer "github.com/talvor/tiled/tsx/renderer"
 )
 
-func NewTilesetRenderer(tilesetBaseDir string) *tsxrenderer.Renderer {
-	ts := tsx.NewTilesetManager(tilesetBaseDir)
-	return tsxrenderer.NewRenderer(ts)
+func NewTilesetRenderer(tilesetBaseDir string) (*tsxrenderer.Renderer, error) {
+	ts, err := tsx.NewTilesetManager(tilesetBaseDir)
+	if err != nil {
+		return nil, err
+	}
+	return tsxrenderer.NewRenderer(ts), nil
 }
 
-func NewMapRenderer(mapBaseDir string, tilesetBaseDir string) *tmxrenderer.Renderer {
-	ts := tsx.NewTilesetManager(tilesetBaseDir)
-	mm := tmx.NewMapManager(mapBaseDir)
+func NewMapRenderer(mapBaseDir string, tilesetBaseDir string) (*tmxrenderer.Renderer, error) {
+	ts, err := tsx.NewTilesetManager(tilesetBaseDir)
+	if err != nil {
+		return nil, err
+	}
+
+	mm, err := tmx.NewMapManager(mapBaseDir)
+	if err != nil {
+		return nil, err
+	}
+
 	tsr := tsxrenderer.NewRenderer(ts)
-	return tmxrenderer.NewRenderer(mm, tsr)
+	return tmxrenderer.NewRenderer(mm, tsr), nil
 }

@@ -3,7 +3,6 @@ package tsx
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -64,34 +63,37 @@ func (tm *TilesetManager) DebugPrintTilesets() {
 	}
 }
 
-func NewTilesetManager(baseDir string) *TilesetManager {
+func NewTilesetManager(baseDir string) (*TilesetManager, error) {
 	tm := &TilesetManager{
 		baseDir:  baseDir,
 		Tilesets: make(map[string]*Tileset),
 		IsLoaded: false,
 	}
 
-	loadTilesets(tm, baseDir)
+	if err := loadTilesets(tm, baseDir); err != nil {
+		return nil, err
+	}
 
-	return tm
+	return tm, nil
 }
 
-func loadTilesets(tm *TilesetManager, baseDir string) {
+func loadTilesets(tm *TilesetManager, baseDir string) error {
 	tsxFiles, err := findTSXFiles(baseDir)
 	if err != nil {
-		log.Fatalf("Error loading tilesets: %s %v", baseDir, err)
+		return fmt.Errorf("error loading tilesets: %s %w", baseDir, err)
 	}
 
 	for _, tsxFile := range tsxFiles {
 		ts, err := LoadFile(tsxFile)
 		if err != nil {
-			log.Fatalf("Error loading tilesets: %s %v", baseDir, err)
+			return fmt.Errorf("error loading tilesets: %s %w", baseDir, err)
 		}
 
 		tm.Tilesets[ts.Name] = ts
 	}
 
 	tm.IsLoaded = true
+	return nil
 }
 
 func findTSXFiles(dir string) ([]string, error) {

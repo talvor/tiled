@@ -3,7 +3,6 @@ package tmx
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -37,34 +36,37 @@ func (mm *MapManager) DebugPrintMaps() {
 	}
 }
 
-func NewMapManager(baseDir string) *MapManager {
+func NewMapManager(baseDir string) (*MapManager, error) {
 	mm := &MapManager{
 		baseDir:  baseDir,
 		Maps:     make(map[string]*Map),
 		IsLoaded: false,
 	}
 
-	LoadMaps(mm)
+	if err := LoadMaps(mm); err != nil {
+		return nil, err
+	}
 
-	return mm
+	return mm, nil
 }
 
-func LoadMaps(mm *MapManager) {
+func LoadMaps(mm *MapManager) error {
 	tsxFiles, err := findTMXFiles(mm.baseDir)
 	if err != nil {
-		log.Fatalf("Error loading maps: %s %v", mm.baseDir, err)
+		return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
 	}
 
 	for _, tsxFile := range tsxFiles {
 		t, err := LoadFile(tsxFile)
 		if err != nil {
-			log.Fatalf("Error loading maps: %s %v", mm.baseDir, err)
+			return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
 		}
 
 		mm.Maps[t.Class] = t
 	}
 
 	mm.IsLoaded = true
+	return nil
 }
 
 func findTMXFiles(dir string) ([]string, error) {
