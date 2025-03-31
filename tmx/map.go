@@ -6,6 +6,7 @@ import (
 	"compress/zlib"
 	"encoding/base64"
 	"errors"
+	"image"
 	"io"
 	"path"
 	"strconv"
@@ -92,6 +93,16 @@ func (l *Layer) GetTilePositionFromIndex(tileIdx int, m *Map) (int, int) {
 	x := tileIdx % l.Width
 	y := tileIdx / l.Width
 	return l.OffsetX + x*m.TileWidth, l.OffsetY + y*m.TileHeight
+}
+
+func (l *Layer) GetTileRectFromIndex(tileIdx int, m *Map) image.Rectangle {
+	x := tileIdx % l.Width
+	y := tileIdx / l.Width
+	rect := image.Rect(x*m.TileWidth+l.OffsetX,
+		y*m.TileHeight+l.OffsetY,
+		(x+1)*m.TileWidth+l.OffsetX,
+		(y+1)*m.TileHeight+l.OffsetY)
+	return rect
 }
 
 type Data struct {
