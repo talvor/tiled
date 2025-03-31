@@ -25,22 +25,8 @@ func init() {
 	homeDir, _ := os.UserHomeDir()
 	tilesetsDir := path.Join(homeDir, "Documents/examples/tilesets")
 	otherTilesetDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/")
-	tm := tsx.NewTilesetManager(tilesetsDir)
+	tm, _ := tsx.NewTilesetManager(tilesetsDir)
 	tm.LoadTilesetsFromDir(otherTilesetDir)
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Player_Base_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Pants_Blue_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Shirt_Green_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Medium_Hair_Brown_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Shoes_Brown_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Hands_Bare_Running.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Player_Base_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Pants_Blue_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Shirt_Green_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Medium_Hair_Brown_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Shoes_Brown_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Hands_Bare_Attack.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "sprites/Player", "Iron_Sword.tsx"))
-	// tm.AddTileset(path.Join(otherTilesetDir, "tilesets/Waterfall", "Waterfall_1.tsx"))
 
 	r = renderer.NewRenderer(tm)
 	simpleSprite = renderer.NewSimpleSprite("NinjaDark", r)
@@ -58,7 +44,6 @@ func init() {
 	complexSprite.AddPart(5, []uint32{15, 16, 17, 33, 34, 35, 51, 52, 53, 69, 70, 71, 87, 88, 89})
 
 	complexAnimation = renderer.NewSimpleAnimation(complexSprite, 200, []int{0, 1, 2, 3, 4, 5})
-	// complexAnimation = renderer.NewSimpleAnimation(complexSprite, 200, []int{0, 2, 3})
 }
 
 type Game struct{}

@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+type SpriteAnimator interface {
+	DrawAnimation(opts *DrawOptions) error
+}
+
 type SimpleAnimation struct {
 	sprite   SpriteDrawer
 	frames   []int
