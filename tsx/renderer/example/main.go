@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/talvor/tiled/tsx"
+	"github.com/talvor/tiled/tsx/manager"
 	"github.com/talvor/tiled/tsx/renderer"
 )
 
@@ -20,12 +20,13 @@ var (
 
 func init() {
 	_, filename, _, _ := runtime.Caller(0)
-	tm := tsx.NewTilesetManager(path.Join(path.Dir(filename), "tilesets"))
+	tm, err := manager.NewManager(path.Join(path.Dir(filename), "tilesets"))
+	panicOnError(err)
 
 	r = renderer.NewRenderer(tm)
 	simpleSprite = renderer.NewSimpleSprite("player", r)
-	runningAnimation = renderer.NewSimpleAnimation(simpleSprite, 100, []int{})
-	attackAnimation = renderer.NewSimpleAnimation(simpleSprite, 150, []int{})
+	runningAnimation = renderer.NewSimpleAnimation(simpleSprite, 100, []int{}, nil)
+	attackAnimation = renderer.NewSimpleAnimation(simpleSprite, 150, []int{}, nil)
 }
 
 type Game struct{}

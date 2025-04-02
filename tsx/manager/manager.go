@@ -1,10 +1,12 @@
-package tsx
+package manager
 
 import (
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/talvor/tiled/tsx"
 )
 
 var (
@@ -14,11 +16,11 @@ var (
 
 type TilesetManager struct {
 	baseDir  string
-	Tilesets map[string]*Tileset
+	Tilesets map[string]*tsx.Tileset
 	IsLoaded bool
 }
 
-func (tm *TilesetManager) GetTilesetBySource(source string) (*Tileset, error) {
+func (tm *TilesetManager) GetTilesetBySource(source string) (*tsx.Tileset, error) {
 	if !tm.IsLoaded {
 		return nil, ErrTilesetManagerNotLoaded
 	}
@@ -30,7 +32,7 @@ func (tm *TilesetManager) GetTilesetBySource(source string) (*Tileset, error) {
 	return nil, fmt.Errorf("source: %s %w", source, ErrTilesetNotFound)
 }
 
-func (tm *TilesetManager) GetTilesetByName(name string) (*Tileset, error) {
+func (tm *TilesetManager) GetTilesetByName(name string) (*tsx.Tileset, error) {
 	if !tm.IsLoaded {
 		return nil, ErrTilesetManagerNotLoaded
 	}
@@ -43,7 +45,7 @@ func (tm *TilesetManager) GetTilesetByName(name string) (*Tileset, error) {
 }
 
 func (tm *TilesetManager) AddTileset(source string) error {
-	ts, err := LoadFile(source)
+	ts, err := tsx.LoadFile(source)
 	if err != nil {
 		return err
 	}
@@ -63,10 +65,10 @@ func (tm *TilesetManager) DebugPrintTilesets() {
 	}
 }
 
-func NewTilesetManager(baseDir string) (*TilesetManager, error) {
+func NewManager(baseDir string) (*TilesetManager, error) {
 	tm := &TilesetManager{
 		baseDir:  baseDir,
-		Tilesets: make(map[string]*Tileset),
+		Tilesets: make(map[string]*tsx.Tileset),
 		IsLoaded: false,
 	}
 
@@ -84,7 +86,7 @@ func loadTilesets(tm *TilesetManager, baseDir string) error {
 	}
 
 	for _, tsxFile := range tsxFiles {
-		ts, err := LoadFile(tsxFile)
+		ts, err := tsx.LoadFile(tsxFile)
 		if err != nil {
 			return fmt.Errorf("error loading tilesets: %s %w", baseDir, err)
 		}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/talvor/tiled/tsx"
+	"github.com/talvor/tiled/tsx/manager"
 )
 
 var (
@@ -174,7 +175,7 @@ func (cs *ComplexSprite) Draw(id interface{}, opts *DrawOptions) error {
 	return nil
 }
 
-func getTileset(tileset string, tilesetManager *tsx.TilesetManager) (*tsx.Tileset, error) {
+func getTileset(tileset string, tilesetManager *manager.TilesetManager) (*tsx.Tileset, error) {
 	return tilesetManager.GetTilesetByName(tileset)
 }
 

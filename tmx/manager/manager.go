@@ -1,10 +1,12 @@
-package tmx
+package manager
 
 import (
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/talvor/tiled/tmx"
 )
 
 var (
@@ -14,11 +16,11 @@ var (
 
 type MapManager struct {
 	baseDir  string
-	Maps     map[string]*Map
+	Maps     map[string]*tmx.Map
 	IsLoaded bool
 }
 
-func (mm *MapManager) GetMapByName(name string) (*Map, error) {
+func (mm *MapManager) GetMapByName(name string) (*tmx.Map, error) {
 	if !mm.IsLoaded {
 		return nil, ErrMapManagerNotLoaded
 	}
@@ -40,10 +42,10 @@ func (mm *MapManager) DebugPrintMaps() {
 	}
 }
 
-func NewMapManager(baseDir string) (*MapManager, error) {
+func NewManager(baseDir string) (*MapManager, error) {
 	mm := &MapManager{
 		baseDir:  baseDir,
-		Maps:     make(map[string]*Map),
+		Maps:     make(map[string]*tmx.Map),
 		IsLoaded: false,
 	}
 
@@ -55,13 +57,13 @@ func NewMapManager(baseDir string) (*MapManager, error) {
 }
 
 func loadMaps(mm *MapManager, baseDir string) error {
-	tsxFiles, err := findTMXFiles(baseDir)
+	tmxFiles, err := findTMXFiles(baseDir)
 	if err != nil {
 		return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
 	}
 
-	for _, tsxFile := range tsxFiles {
-		t, err := LoadFile(tsxFile)
+	for _, tmxFile := range tmxFiles {
+		t, err := tmx.LoadFile(tmxFile)
 		if err != nil {
 			return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
 		}

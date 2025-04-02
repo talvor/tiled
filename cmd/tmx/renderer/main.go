@@ -7,9 +7,9 @@ import (
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/talvor/tiled/tmx"
+	tmxmanager "github.com/talvor/tiled/tmx/manager"
 	tmxrenderer "github.com/talvor/tiled/tmx/renderer"
-	"github.com/talvor/tiled/tsx"
+	tsxmanager "github.com/talvor/tiled/tsx/manager"
 	tsxrenderer "github.com/talvor/tiled/tsx/renderer"
 )
 
@@ -20,11 +20,11 @@ func init() {
 	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tiles")
 	mapsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/maps")
 
-	tm, err := tsx.NewTilesetManager(tilesetsDir)
+	tm, err := tsxmanager.NewManager(tilesetsDir)
 	panicOnError(err)
 	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/outdoor_decorations/"))
 
-	mm, err := tmx.NewMapManager(mapsDir)
+	mm, err := tmxmanager.NewManager(mapsDir)
 	panicOnError(err)
 
 	tsxr := tsxrenderer.NewRenderer(tm)

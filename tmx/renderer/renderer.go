@@ -2,16 +2,16 @@ package renderer
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/talvor/tiled/tmx"
+	"github.com/talvor/tiled/tmx/manager"
 	tsxrenderer "github.com/talvor/tiled/tsx/renderer"
 )
 
 type Renderer struct {
 	TsxRenderer *tsxrenderer.Renderer
-	MapManager  *tmx.MapManager
+	MapManager  *manager.MapManager
 }
 
-func NewRenderer(mm *tmx.MapManager, tsxRenderer *tsxrenderer.Renderer) *Renderer {
+func NewRenderer(mm *manager.MapManager, tsxRenderer *tsxrenderer.Renderer) *Renderer {
 	return &Renderer{
 		TsxRenderer: tsxRenderer,
 		MapManager:  mm,

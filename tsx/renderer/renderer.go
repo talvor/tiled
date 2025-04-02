@@ -8,14 +8,15 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/pkg/errors"
 	"github.com/talvor/tiled/tsx"
+	"github.com/talvor/tiled/tsx/manager"
 )
 
 type Renderer struct {
-	TilesetManager  *tsx.TilesetManager
+	TilesetManager  *manager.TilesetManager
 	TilesetImageMap map[string]*ebiten.Image
 }
 
-func NewRenderer(tm *tsx.TilesetManager) *Renderer {
+func NewRenderer(tm *manager.TilesetManager) *Renderer {
 	return &Renderer{
 		TilesetManager:  tm,
 		TilesetImageMap: make(map[string]*ebiten.Image),

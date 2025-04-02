@@ -5,17 +5,23 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/talvor/tiled/tmx"
+	tmxmanager "github.com/talvor/tiled/tmx/manager"
 	tmxrenderer "github.com/talvor/tiled/tmx/renderer"
-	"github.com/talvor/tiled/tsx"
+	tsxmanager "github.com/talvor/tiled/tsx/manager"
 	tsxrenderer "github.com/talvor/tiled/tsx/renderer"
 )
 
 var tmxr *tmxrenderer.Renderer
 
 func init() {
-	tm := tsx.NewTilesetManager("./assets/")
-	mm := tmx.NewMapManager("./assets/")
+	tm, err := tsxmanager.NewManager("./assets/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	mm, err := tmxmanager.NewManager("./assets/")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	tsxr := tsxrenderer.NewRenderer(tm)
 	tmxr = tmxrenderer.NewRenderer(mm, tsxr)
@@ -30,9 +36,12 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 
-	tmxr.DrawMapLayer("StartScene", "background", screen)
-	tmxr.DrawMapLayer("StartScene", "bottom", screen)
-	tmxr.DrawMapLayer("StartScene", "top", screen)
+	opts := &ebiten.DrawImageOptions{}
+	op := &tmxrenderer.DrawOptions{Screen: screen, Op: opts}
+
+	tmxr.DrawMapLayer("StartScene", "background", op)
+	tmxr.DrawMapLayer("StartScene", "bottom", op)
+	tmxr.DrawMapLayer("StartScene", "top", op)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
