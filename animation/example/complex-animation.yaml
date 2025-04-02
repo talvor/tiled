@@ -1,0 +1,26 @@
+---
+animations:
+  - class: complex-player
+    sprites:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    complex:
+      frames:
+        - duration: 100
+          parts:
+            - id: 1
+              sprite: 1
+              x_offset: 16
+              y_offset: -16
+              flip_horizontal: false
+              flip_vertical: true
+            - id: 2
+              sprite: 2
+        - duration: 80
+          parts:
+            - id: 3
+              sprite: 1
+            - id: 5
+              sprite: 2

@@ -1,11 +1,21 @@
 package tiled
 
 import (
+	anim "github.com/talvor/tiled/animation/manager"
+	anir "github.com/talvor/tiled/animation/renderer"
 	tmxm "github.com/talvor/tiled/tmx/manager"
 	tmxr "github.com/talvor/tiled/tmx/renderer"
 	tsxm "github.com/talvor/tiled/tsx/manager"
 	tsxr "github.com/talvor/tiled/tsx/renderer"
 )
+
+func NewAnimationRenderer(animationBaseDir string) (*anir.Renderer, error) {
+	am, err := anim.NewManager(animationBaseDir)
+	if err != nil {
+		return nil, err
+	}
+	return anir.NewRenderer(am), nil
+}
 
 func NewTilesetRenderer(tilesetBaseDir string) (*tsxr.Renderer, error) {
 	ts, err := tsxm.NewManager(tilesetBaseDir)

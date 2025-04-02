@@ -1,0 +1,74 @@
+---
+animations:
+  - class: simple_player
+    sprites:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    simple:
+      duration: 100
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: simple_enemy
+    sprites:
+      - enemy_body
+      - enemy_legs
+      - enemy_arms
+      - enemy_head
+    simple:
+      duration: 100
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: timed-player
+    sprites:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+
+    timed:
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - id: 1
+          duration: 100
+        - id: 2
+          duration: 150
+        - id: 3
+          duration: 80
+
+  - class: complex-player
+    sprites:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    complex:
+      frames:
+        - duration: 100
+          parts:
+            - id: 1
+              sprite: 1
+              x_offset: 16
+              y_offset: -16
+              flip_horizontal: false
+              flip_vertical: true
+            - id: 2
+              sprite: 2
+        - duration: 80
+          parts:
+            - id: 3
+              sprite: 1
+            - id: 5
+              sprite: 2

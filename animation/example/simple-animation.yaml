@@ -1,0 +1,30 @@
+---
+animations:
+  - class: simple_player
+    sprites:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    simple:
+      duration: 100
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: simple_enemy
+    sprites:
+      - enemy_body
+      - enemy_legs
+      - enemy_arms
+      - enemy_head
+    simple:
+      duration: 100
+      frames:
+        - 1
+        - 2
+        - 3
