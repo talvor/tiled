@@ -12,47 +12,101 @@ import (
 var (
 	ErrTilesetManagerNotLoaded = errors.New("tsx: tileset manager not loaded")
 	ErrTilesetNotFound         = errors.New("tsx: tileset not found")
+	ErrTilesetGroupNotFound    = errors.New("tsx: tileset group not found")
 )
 
 type TilesetManager struct {
-	baseDir  string
-	Tilesets map[string]*tsx.Tileset
-	IsLoaded bool
+	baseDir          string
+	TilesetsByName   map[string]*tsx.Tileset
+	TilesetsBySource map[string]*tsx.Tileset
+	TilesetGroups    map[string]tsx.TilesetGroup
 }
 
 func (tm *TilesetManager) GetTilesetBySource(source string) (*tsx.Tileset, error) {
-	if !tm.IsLoaded {
-		return nil, ErrTilesetManagerNotLoaded
+	if _, ok := tm.TilesetsBySource[source]; !ok {
+		return nil, fmt.Errorf("source: %s %w", source, ErrTilesetNotFound)
 	}
-	for _, ts := range tm.Tilesets {
-		if ts.Source == source {
-			return ts, nil
-		}
-	}
-	return nil, fmt.Errorf("source: %s %w", source, ErrTilesetNotFound)
+
+	return tm.TilesetsBySource[source], nil
 }
 
 func (tm *TilesetManager) GetTilesetByName(name string) (*tsx.Tileset, error) {
-	if !tm.IsLoaded {
-		return nil, ErrTilesetManagerNotLoaded
-	}
-
-	if _, ok := tm.Tilesets[name]; !ok {
+	if _, ok := tm.TilesetsByName[name]; !ok {
 		return nil, fmt.Errorf("name: %s %w", name, ErrTilesetNotFound)
 	}
 
-	return tm.Tilesets[name], nil
+	return tm.TilesetsByName[name], nil
 }
 
-func (tm *TilesetManager) AddTileset(source string) error {
-	ts, err := tsx.LoadFile(source)
-	if err != nil {
-		return err
+func (tm *TilesetManager) HasTilesetByName(name string) bool {
+	if _, ok := tm.TilesetsByName[name]; !ok {
+		return false
 	}
 
-	tm.Tilesets[ts.Name] = ts
+	return true
+}
+
+func (tm *TilesetManager) HasTilesetBySource(source string) bool {
+	if _, ok := tm.TilesetsBySource[source]; !ok {
+		return false
+	}
+
+	return true
+}
+
+func (tm *TilesetManager) AddTileset(sourcePath string) (*tsx.Tileset, error) {
+	ts, err := tsx.LoadFile(sourcePath)
+	if err != nil {
+		return nil, err
+	}
+
+	tm.TilesetsByName[ts.Name] = ts
+	tm.TilesetsBySource[ts.Source] = ts
+
+	return ts, nil
+}
+
+func (tm *TilesetManager) AddTilesetGroupBySource(name string, sources []string) error {
+	var tilesets tsx.TilesetGroup
+	for _, source := range sources {
+		var ts *tsx.Tileset
+		ts, _ = tm.GetTilesetBySource(source)
+		if ts == nil {
+			var err error
+			ts, err = tm.AddTileset(source)
+			if err != nil {
+				return err
+			}
+		}
+		tilesets = append(tilesets, ts)
+	}
+
+	tm.TilesetGroups[name] = tilesets
 
 	return nil
+}
+
+func (tm *TilesetManager) AddTilesetGroup(name string, names []string) error {
+	var tilesets tsx.TilesetGroup
+	for _, name := range names {
+		ts, err := tm.GetTilesetByName(name)
+		if err != nil {
+			return err
+		}
+		tilesets = append(tilesets, ts)
+	}
+
+	tm.TilesetGroups[name] = tilesets
+
+	return nil
+}
+
+func (tm *TilesetManager) GetTilesetGroup(name string) (tsx.TilesetGroup, error) {
+	if _, ok := tm.TilesetGroups[name]; !ok {
+		return nil, fmt.Errorf("group: %s %w", name, ErrTilesetGroupNotFound)
+	}
+
+	return tm.TilesetGroups[name], nil
 }
 
 func (tm *TilesetManager) LoadTilesetsFromDir(dir string) {
@@ -60,16 +114,17 @@ func (tm *TilesetManager) LoadTilesetsFromDir(dir string) {
 }
 
 func (tm *TilesetManager) DebugPrintTilesets() {
-	for name := range tm.Tilesets {
+	for name := range tm.TilesetsByName {
 		fmt.Println(name)
 	}
 }
 
 func NewManager(baseDir string) (*TilesetManager, error) {
 	tm := &TilesetManager{
-		baseDir:  baseDir,
-		Tilesets: make(map[string]*tsx.Tileset),
-		IsLoaded: false,
+		baseDir:          baseDir,
+		TilesetsByName:   make(map[string]*tsx.Tileset),
+		TilesetsBySource: make(map[string]*tsx.Tileset),
+		TilesetGroups:    make(map[string]tsx.TilesetGroup),
 	}
 
 	if err := loadTilesets(tm, baseDir); err != nil {
@@ -91,10 +146,10 @@ func loadTilesets(tm *TilesetManager, baseDir string) error {
 			return fmt.Errorf("error loading tilesets: %s %w", baseDir, err)
 		}
 
-		tm.Tilesets[ts.Name] = ts
+		tm.TilesetsByName[ts.Name] = ts
+		tm.TilesetsBySource[ts.Source] = ts
 	}
 
-	tm.IsLoaded = true
 	return nil
 }
 
