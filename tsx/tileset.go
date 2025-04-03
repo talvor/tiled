@@ -26,6 +26,7 @@ type Tileset struct {
 	Tiles      []Tile `xml:"tile"`
 }
 
+// GetTileRect returns the rectangle of a tile in the tileset.
 func (ts *Tileset) GetTileRect(tileID uint32) (image.Rectangle, error) {
 	if tileID >= uint32(ts.TileCount) {
 		return image.Rectangle{}, ErrTileIDOutOfBounds
@@ -48,6 +49,26 @@ func (ts *Tileset) GetTileRect(tileID uint32) (image.Rectangle, error) {
 		(x+1)*ts.TileWidth+xOffset,
 		(y+1)*ts.TileHeight+yOffset)
 	return rect, nil
+}
+
+// GetTileCollisionRect returns the collision rectangle of a tile in the tileset.
+// The collision is determined by an Object inside the tiles ObjectGroup or by the tile itself.
+func (ts *Tileset) GetTileCollisionRect(tileID uint32, collisionObjectName string) (image.Rectangle, error) {
+	if tileID >= uint32(ts.TileCount) {
+		return image.Rectangle{}, ErrTileIDOutOfBounds
+	}
+	for _, t := range ts.Tiles {
+		if t.ID == tileID {
+			for _, og := range t.ObjectGroups {
+				for _, o := range og.Objects {
+					if o.Name == collisionObjectName {
+						return image.Rect(int(o.X), int(o.Y), int(o.X+o.Width), int(o.Y+o.Height)), nil
+					}
+				}
+			}
+		}
+	}
+	return image.Rect(0, 0, ts.TileWidth, ts.TileHeight), nil
 }
 
 func (ts *Tileset) GetTileByType(tileType string) (*Tile, error) {
