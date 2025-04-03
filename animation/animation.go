@@ -25,13 +25,14 @@ type Frame struct {
 }
 
 type Animation struct {
-	Class    string   `yaml:"class" json:"class"`
-	Action   string   `yaml:"action" json:"action"`
-	Tilesets []string `yaml:"tilesets" json:"tilesets"`
-	Frames   []Frame  `json:"frames"`
-	Simple   *simple  `yaml:"simple,omitempty" json:"simple,omitempty"`
-	Timed    *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
-	Complex  *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
+	Class        string   `yaml:"class" json:"class"`
+	Action       string   `yaml:"action" json:"action"`
+	TilesetGroup string   `yaml:"tileset_group" json:"tileset_group"`
+	Tilesets     []string `json:"tilesets"`
+	Frames       []Frame  `json:"frames"`
+	Simple       *simple  `yaml:"simple,omitempty" json:"simple,omitempty"`
+	Timed        *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
+	Complex      *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
 
 	currentFrame  int
 	nextFrameTime int64
@@ -60,6 +61,26 @@ func (a *Animation) determineFrame() {
 func (a *Animation) setNextFrameTime() {
 	frame := a.Frames[a.currentFrame]
 	a.nextFrameTime = time.Now().UnixMilli() + int64(frame.Duration)
+}
+
+func (a *Animation) decodeTilesetGroup(tilesetGroups []*TilesetGroup) {
+	if a.TilesetGroup == "" {
+		return
+	}
+	tilesets := a.Tilesets
+
+	var group *TilesetGroup
+	for _, g := range tilesetGroups {
+		if g.Name == a.TilesetGroup {
+			group = g
+			break
+		}
+	}
+	if group == nil {
+		return
+	}
+	a.Tilesets = slices.Concat([]string{}, group.Tilesets, tilesets)
+	a.TilesetGroup = ""
 }
 
 func (a *Animation) decodeSimple() {
@@ -151,10 +172,16 @@ func (a *Animation) decodeComplex() {
 	a.Complex = nil
 }
 
+type TilesetGroup struct {
+	Name     string   `yaml:"name" json:"name"`
+	Tilesets []string `yaml:"tilesets" json:"tilesets"`
+}
+
 type Animations struct {
-	baseDir    string
-	Source     string       `json:"source"`
-	Animations []*Animation `yaml:"animations" json:"animations"`
+	baseDir       string
+	Source        string          `json:"source"`
+	Animations    []*Animation    `yaml:"animations" json:"animations"`
+	TilesetGroups []*TilesetGroup `yaml:"tileset_groups" json:"tileset_groups"`
 }
 
 // LoadReader function loads tileset in TSX format from io.Reader
@@ -175,6 +202,7 @@ func fileReader(source string, r io.Reader) (*Animations, error) {
 	for _, animation := range animations.Animations {
 		animation.Frames = []Frame{}
 
+		animation.decodeTilesetGroup(animations.TilesetGroups)
 		animation.decodeSimple()
 		animation.decodeTimed()
 		animation.decodeComplex()
