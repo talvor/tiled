@@ -1,12 +1,15 @@
 package main
 
 import (
+	"image"
 	"image/color"
 	"log"
 	"os"
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/talvor/tiled/tsx"
 	"github.com/talvor/tiled/tsx/manager"
 	"github.com/talvor/tiled/tsx/renderer"
 )
@@ -16,13 +19,18 @@ var (
 	walkAnimation  *renderer.SimpleAnimation
 	runAnimation   *renderer.TimedAnimation
 	compoundSprite *renderer.CompoundSprite
+	bodyTileset    *tsx.Tileset
+	collisionRect1 image.Rectangle
+	collisionRect2 image.Rectangle
 )
 
 func init() {
 	homeDir, _ := os.UserHomeDir()
 	tilesetsDir := path.Join(homeDir, "Downloads/mana_seed_character_base/character")
 	tm, _ := manager.NewManager(tilesetsDir)
-
+	bodyTileset, _ = tm.GetTilesetByName("char_a_p1_0bas_humn_v01")
+	collisionRect1, _ = bodyTileset.GetTileCollisionRect(48, "collider")
+	collisionRect2, _ = bodyTileset.GetTileCollisionRect(49, "full_tile_collider")
 	r = renderer.NewRenderer(tm)
 	compoundSprite = renderer.NewCompoundSprite([]string{
 		"char_a_p1_0bas_humn_v01",
@@ -67,8 +75,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	moveRight(16, 16)
 
 	walkAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+
+	cx := float64(collisionRect1.Min.X) + dx
+	cy := float64(collisionRect1.Min.Y) + dy
+	ebitenutil.DrawRect(screen, cx, cy, float64(collisionRect1.Dx()), float64(collisionRect1.Dy()), color.RGBA{255, 0, 0, 50})
+
 	nextLine(64)
 	runAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	cx = float64(collisionRect2.Min.X) + dx
+	cy = float64(collisionRect2.Min.Y) + dy
+	ebitenutil.DrawRect(screen, cx, cy, float64(collisionRect2.Dx()), float64(collisionRect2.Dy()), color.RGBA{255, 0, 0, 50})
 
 	op.GeoM.Reset()
 }
