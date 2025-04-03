@@ -97,6 +97,8 @@ func (ts *Tileset) decodeImage() {
 	ts.Image.Source = path.Join(ts.baseDir, ts.Image.Source)
 }
 
+type TilesetGroup = []*Tileset
+
 type Image struct {
 	Source string `xml:"source,attr"`
 	Width  int    `xml:"width,attr"`
