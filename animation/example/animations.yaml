@@ -1,0 +1,78 @@
+---
+animations:
+  - class: simple_player
+    action: walk
+    tilesets:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    simple:
+      duration: 300
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: simple_enemy
+    action: attack
+    tilesets:
+      - enemy_body
+      - enemy_legs
+      - enemy_arms
+      - enemy_head
+    simple:
+      duration: 100
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: timed-player
+    action: run
+    tilesets:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+
+    timed:
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - id: 1
+          duration: 100
+        - id: 2
+          duration: 150
+        - id: 3
+          duration: 80
+
+  - class: complex-player
+    action: fish
+    tilesets:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    complex:
+      frames:
+        - duration: 100
+          parts:
+            - id: 1
+              tileset: 1
+              x_offset: 16
+              y_offset: -16
+              flip_horizontal: false
+              flip_vertical: true
+            - id: 2
+              tileset: 2
+        - duration: 80
+          parts:
+            - id: 3
+              tileset: 1
+            - id: 5
+              tileset: 2

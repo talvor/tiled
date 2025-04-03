@@ -1,0 +1,32 @@
+---
+animations:
+  - class: simple_player
+    action: walk
+    tilesets:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+    simple:
+      duration: 300
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - 1
+        - 2
+        - 3
+
+  - class: simple_enemy
+    action: attack
+    tilesets:
+      - enemy_body
+      - enemy_legs
+      - enemy_arms
+      - enemy_head
+    simple:
+      duration: 300
+      frames:
+        - 1
+        - 2
+        - 3

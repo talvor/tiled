@@ -1,0 +1,21 @@
+---
+animations:
+  - class: timed-player
+    action: run
+    tilesets:
+      - player_body
+      - player_legs
+      - player_arms
+      - player_head
+
+    timed:
+      defaults:
+        flipHorizontal: false
+        flipVertical: false
+      frames:
+        - id: 1
+          duration: 100
+        - id: 2
+          duration: 150
+        - id: 3
+          duration: 80

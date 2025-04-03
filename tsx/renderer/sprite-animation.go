@@ -3,12 +3,14 @@ package renderer
 import (
 	"errors"
 	"time"
+
+	"github.com/talvor/tiled/common"
 )
 
 var ErrFrameTimingMismatch = errors.New("frame and timing slices must be the same length")
 
 type SpriteAnimator interface {
-	DrawAnimation(opts *DrawOptions) error
+	DrawAnimation(opts *common.DrawOptions) error
 }
 
 type AnimationDefaults struct {
@@ -29,7 +31,7 @@ type animation struct {
 	nextFrameTime int64
 }
 
-func (a *animation) DrawAnimation(opts *DrawOptions) error {
+func (a *animation) DrawAnimation(opts *common.DrawOptions) error {
 	a.applyDefaults(opts)
 	a.determineFrame()
 
@@ -40,7 +42,7 @@ func (a *animation) DrawAnimation(opts *DrawOptions) error {
 	return a.sprite.Draw(uint32(frame.id), opts)
 }
 
-func (a *animation) applyDefaults(opts *DrawOptions) {
+func (a *animation) applyDefaults(opts *common.DrawOptions) {
 	if a.defaults != nil {
 		opts.FlipHorizontal = a.defaults.FlipHorizontal
 		opts.FlipVertical = a.defaults.FlipVertical

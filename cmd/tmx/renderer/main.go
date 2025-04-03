@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/talvor/tiled/common"
 	tmxmanager "github.com/talvor/tiled/tmx/manager"
 	tmxrenderer "github.com/talvor/tiled/tmx/renderer"
 	tsxmanager "github.com/talvor/tiled/tsx/manager"
@@ -22,7 +23,8 @@ func init() {
 
 	tm, err := tsxmanager.NewManager(tilesetsDir)
 	panicOnError(err)
-	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/outdoor_decorations/"))
+	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/outdoorDecorations/"))
+	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/crops/"))
 
 	mm, err := tmxmanager.NewManager(mapsDir)
 	panicOnError(err)
@@ -41,7 +43,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 	op := &ebiten.DrawImageOptions{}
 
-	opts := &tmxrenderer.DrawOptions{
+	opts := &common.DrawOptions{
 		Screen: screen,
 		Op:     op,
 	}

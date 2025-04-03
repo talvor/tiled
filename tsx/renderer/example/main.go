@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tsx/manager"
 	"github.com/talvor/tiled/tsx/renderer"
 )
@@ -52,7 +53,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	for row := range rows {
 		for column := range columns {
-			if err := simpleSprite.Draw((row*columns)+column, &renderer.DrawOptions{Screen: screen, Op: op}); err != nil {
+			if err := simpleSprite.Draw((row*columns)+column, &common.DrawOptions{Screen: screen, Op: op}); err != nil {
 				panic(err)
 			}
 			op.GeoM.Translate(32, 0)
@@ -67,32 +68,32 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw running animations
 	// Draw running down
 	runningAnimation.SetFrames([]int{18, 19, 20, 21, 22, 23})
-	runningAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	runningAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	op.GeoM.Translate(32, 0)
 	// Draw running right
 	runningAnimation.SetFrames([]int{24, 25, 26, 27, 28, 29})
-	runningAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	runningAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	op.GeoM.Translate(32, 0)
 	// Draw running right
-	runningAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op, FlipHorizontal: true})
+	runningAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op, FlipHorizontal: true})
 	op.GeoM.Translate(32, 0)
 	// Draw running up
 	runningAnimation.SetFrames([]int{30, 31, 32, 33, 34, 35})
-	runningAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	runningAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 
 	op.GeoM.Translate(-96, 48)
 
 	// Draw attack animations
 	attackAnimation.SetFrames([]int{36, 37, 38, 39})
-	attackAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	attackAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	op.GeoM.Translate(32, 0)
 	attackAnimation.SetFrames([]int{42, 43, 44, 45})
-	attackAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	attackAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	op.GeoM.Translate(32, 0)
-	attackAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op, FlipHorizontal: true})
+	attackAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op, FlipHorizontal: true})
 	op.GeoM.Translate(32, 0)
 	attackAnimation.SetFrames([]int{48, 49, 50, 51})
-	attackAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	attackAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	op.GeoM.Translate(32, 0)
 }
 
