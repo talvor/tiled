@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/talvor/tiled/animation"
-	tsxm "github.com/talvor/tiled/tsx/manager"
-	tsxr "github.com/talvor/tiled/tsx/renderer"
 )
 
 var ErrAnimationNotFound = errors.New("animation not found")
@@ -16,26 +14,16 @@ var ErrAnimationNotFound = errors.New("animation not found")
 type AnimationManager struct {
 	baseDir    string
 	Animations map[string]*animation.Animation
-	TSManager  *tsxm.TilesetManager
-	TSRenderer *tsxr.Renderer
 }
 
 func (am *AnimationManager) GetAnimation(class string, action string) (*animation.Animation, error) {
 	name := makeAnimationName(class, action)
 	ani, ok := am.Animations[name]
 	if !ok {
-		return nil, fmt.Errorf("%w class:%s action:%s", class, action, ErrAnimationNotFound)
+		return nil, fmt.Errorf("class:%s action:%s %w", class, action, ErrAnimationNotFound)
 	}
 
 	return ani, nil
-}
-
-func (am *AnimationManager) SetTilesetManager(tsManager *tsxm.TilesetManager) {
-	am.TSManager = tsManager
-}
-
-func (am *AnimationManager) SetRenderer(renderer *tsxr.Renderer) {
-	am.TSRenderer = renderer
 }
 
 func (am *AnimationManager) DebugPrintAnimations() {

@@ -11,7 +11,7 @@ import (
 )
 
 type Part struct {
-	Sprite         string `json:"sprite"`
+	Tileset        string `json:"tileset"`
 	TileID         int    `json:"tile_id"`
 	XOffset        int    `json:"x_offset"`
 	YOffset        int    `json:"y_offset"`
@@ -25,13 +25,13 @@ type Frame struct {
 }
 
 type Animation struct {
-	Class   string   `yaml:"class" json:"class"`
-	Action  string   `yaml:"action" json:"action"`
-	Sprites []string `yaml:"sprites" json:"sprites"`
-	Frames  []Frame  `json:"frames"`
-	Simple  *simple  `yaml:"simple,omitempty" json:"simple,omitempty"`
-	Timed   *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
-	Complex *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
+	Class    string   `yaml:"class" json:"class"`
+	Action   string   `yaml:"action" json:"action"`
+	Tilesets []string `yaml:"tilesets" json:"tilesets"`
+	Frames   []Frame  `json:"frames"`
+	Simple   *simple  `yaml:"simple,omitempty" json:"simple,omitempty"`
+	Timed    *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
+	Complex  *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
 
 	currentFrame  int
 	nextFrameTime int64
@@ -67,6 +67,7 @@ func (a *Animation) decodeSimple() {
 		return
 	}
 	seq := func(yield func(Frame) bool) {
+		durationPerFrame := a.Simple.Duration / len(a.Simple.Frames)
 		for idx := range a.Simple.Frames {
 			part := Part{
 				TileID:         a.Simple.Frames[idx],
@@ -74,7 +75,7 @@ func (a *Animation) decodeSimple() {
 				FlipVertical:   a.Simple.Defaults.FlipVertical,
 			}
 			frame := Frame{
-				Duration: a.Simple.Duration,
+				Duration: durationPerFrame,
 				Parts:    []Part{part},
 			}
 			if !yield(frame) {
@@ -122,7 +123,7 @@ func (a *Animation) decodeComplex() {
 				for _, part := range frame.Parts {
 					p := Part{
 						TileID:         part.ID,
-						Sprite:         a.Sprites[part.Sprite-1],
+						Tileset:        a.Tilesets[part.Tileset-1],
 						XOffset:        part.XOffset,
 						YOffset:        part.YOffset,
 						FlipHorizontal: part.FlipHorizontal,
@@ -196,6 +197,8 @@ func LoadFile(fileName string) (*Animations, error) {
 type defaults struct {
 	FlipHorizontal bool `yaml:"flip_horizontal"`
 	FlipVertical   bool `yaml:"flip_vertical"`
+	XOffset        int  `yaml:"x_offset"`
+	YOffset        int  `yaml:"y_offset"`
 }
 type simple struct {
 	Duration int      `yaml:"duration"`
@@ -214,7 +217,7 @@ type complex struct {
 		Duration int `yaml:"duration"`
 		Parts    []struct {
 			ID             int  `yaml:"id"`
-			Sprite         int  `yaml:"sprite"`
+			Tileset        int  `yaml:"tileset"`
 			XOffset        int  `yaml:"x_offset"`
 			YOffset        int  `yaml:"y_offset"`
 			FlipHorizontal bool `yaml:"flip_horizontal"`

@@ -37,13 +37,13 @@ func (r *Renderer) Draw(class string, action string, opts *common.DrawOptions) e
 		opts.FlipHorizontal = part.FlipHorizontal
 		opts.FlipVertical = part.FlipVertical
 
-		if part.Sprite != "" {
-			if err := r.drawTile(part.Sprite, part.TileID, opts); err != nil {
+		if part.Tileset != "" {
+			if err := r.drawTile(part.Tileset, part.TileID, opts); err != nil {
 				return err
 			}
 		} else {
-			for _, sprite := range ani.Sprites {
-				if err := r.drawTile(sprite, part.TileID, opts); err != nil {
+			for _, tileset := range ani.Tilesets {
+				if err := r.drawTile(tileset, part.TileID, opts); err != nil {
 					return err
 				}
 			}
@@ -52,7 +52,7 @@ func (r *Renderer) Draw(class string, action string, opts *common.DrawOptions) e
 	return nil
 }
 
-func (r *Renderer) drawTile(name string, tileID int, opts *common.DrawOptions) error {
+func (r *Renderer) drawTile(tileset string, tileID int, opts *common.DrawOptions) error {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Concat(opts.Op.GeoM)
 	op.GeoM.Translate(opts.OffsetX, opts.OffsetY)
@@ -62,8 +62,8 @@ func (r *Renderer) drawTile(name string, tileID int, opts *common.DrawOptions) e
 		FlipHorizontal: opts.FlipHorizontal,
 		FlipVertical:   opts.FlipVertical,
 	}
-	if err := r.TSXRenderer.DrawTileWithName(name, uint32(tileID), drawOptions); err != nil {
-		return fmt.Errorf("failed to draw tile %s: %w", name, err)
+	if err := r.TSXRenderer.DrawTileWithName(tileset, uint32(tileID), drawOptions); err != nil {
+		return fmt.Errorf("failed to draw tile %s: %w", tileset, err)
 	}
 	return nil
 }

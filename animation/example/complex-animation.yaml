@@ -1,7 +1,8 @@
 ---
 animations:
   - class: complex-player
-    sprites:
+    action: fish
+    tilesets:
       - player_body
       - player_legs
       - player_arms
@@ -11,16 +12,16 @@ animations:
         - duration: 100
           parts:
             - id: 1
-              sprite: 1
+              tileset: 1
               x_offset: 16
               y_offset: -16
               flip_horizontal: false
               flip_vertical: true
             - id: 2
-              sprite: 2
+              tileset: 2
         - duration: 80
           parts:
             - id: 3
-              sprite: 1
+              tileset: 1
             - id: 5
-              sprite: 2
+              tileset: 2

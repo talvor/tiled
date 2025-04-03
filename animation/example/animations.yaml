@@ -1,13 +1,14 @@
 ---
 animations:
   - class: simple_player
-    sprites:
+    action: walk
+    tilesets:
       - player_body
       - player_legs
       - player_arms
       - player_head
     simple:
-      duration: 100
+      duration: 300
       defaults:
         flipHorizontal: false
         flipVertical: false
@@ -17,7 +18,8 @@ animations:
         - 3
 
   - class: simple_enemy
-    sprites:
+    action: attack
+    tilesets:
       - enemy_body
       - enemy_legs
       - enemy_arms
@@ -30,7 +32,8 @@ animations:
         - 3
 
   - class: timed-player
-    sprites:
+    action: run
+    tilesets:
       - player_body
       - player_legs
       - player_arms
@@ -49,7 +52,8 @@ animations:
           duration: 80
 
   - class: complex-player
-    sprites:
+    action: fish
+    tilesets:
       - player_body
       - player_legs
       - player_arms
@@ -59,16 +63,16 @@ animations:
         - duration: 100
           parts:
             - id: 1
-              sprite: 1
+              tileset: 1
               x_offset: 16
               y_offset: -16
               flip_horizontal: false
               flip_vertical: true
             - id: 2
-              sprite: 2
+              tileset: 2
         - duration: 80
           parts:
             - id: 3
-              sprite: 1
+              tileset: 1
             - id: 5
-              sprite: 2
+              tileset: 2

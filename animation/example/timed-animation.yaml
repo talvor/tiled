@@ -1,7 +1,8 @@
 ---
 animations:
   - class: timed-player
-    sprites:
+    action: run
+    tilesets:
       - player_body
       - player_legs
       - player_arms
