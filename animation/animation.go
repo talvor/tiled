@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"time"
 
 	yaml "gopkg.in/yaml.v3"
 )
@@ -25,11 +26,40 @@ type Frame struct {
 
 type Animation struct {
 	Class   string   `yaml:"class" json:"class"`
+	Action  string   `yaml:"action" json:"action"`
 	Sprites []string `yaml:"sprites" json:"sprites"`
 	Frames  []Frame  `json:"frames"`
 	Simple  *simple  `yaml:"simple,omitempty" json:"simple,omitempty"`
 	Timed   *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
 	Complex *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
+
+	currentFrame  int
+	nextFrameTime int64
+}
+
+func (a *Animation) GetCurrentFrame() Frame {
+	a.determineFrame()
+	return a.Frames[a.currentFrame]
+}
+
+func (a *Animation) determineFrame() {
+	if a.nextFrameTime == 0 {
+		a.currentFrame = 0
+		a.setNextFrameTime()
+		return
+	}
+	if time.Now().UnixMilli() >= a.nextFrameTime {
+		a.currentFrame++
+		if a.currentFrame >= len(a.Frames) {
+			a.currentFrame = 0
+		}
+		a.setNextFrameTime()
+	}
+}
+
+func (a *Animation) setNextFrameTime() {
+	frame := a.Frames[a.currentFrame]
+	a.nextFrameTime = time.Now().UnixMilli() + int64(frame.Duration)
 }
 
 func (a *Animation) decodeSimple() {

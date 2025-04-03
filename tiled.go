@@ -9,12 +9,18 @@ import (
 	tsxr "github.com/talvor/tiled/tsx/renderer"
 )
 
-func NewAnimationRenderer(animationBaseDir string) (*anir.Renderer, error) {
+func NewAnimationRenderer(animationBaseDir string, tilesetBaseDir string) (*anir.Renderer, error) {
 	am, err := anim.NewManager(animationBaseDir)
 	if err != nil {
 		return nil, err
 	}
-	return anir.NewRenderer(am), nil
+	tsm, err := tsxm.NewManager(tilesetBaseDir)
+	if err != nil {
+		return nil, err
+	}
+	tsr := tsxr.NewRenderer(tsm)
+
+	return anir.NewRenderer(am, tsr), nil
 }
 
 func NewTilesetRenderer(tilesetBaseDir string) (*tsxr.Renderer, error) {

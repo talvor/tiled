@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/pkg/errors"
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tsx"
 	"github.com/talvor/tiled/tsx/manager"
 )
@@ -49,14 +50,14 @@ func (er *Renderer) DrawTilesetByName(name string, screen *ebiten.Image, op *ebi
 	return nil
 }
 
-func (er *Renderer) DrawTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
+func (er *Renderer) DrawTile(ts *tsx.Tileset, tileId uint32, opts *common.DrawOptions) error {
 	if ts.TileHasAnimation(tileId) {
 		return er.DrawAnimatedTile(ts, tileId, opts)
 	}
 	return er.drawTile(ts, tileId, opts)
 }
 
-func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts *DrawOptions) error {
+func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts *common.DrawOptions) error {
 	ts, err := er.TilesetManager.GetTilesetBySource(tilesetSource)
 	if err != nil {
 		return err
@@ -65,7 +66,16 @@ func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts
 	return er.DrawTile(ts, tileId, opts)
 }
 
-func (er *Renderer) DrawAnimatedTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
+func (er *Renderer) DrawTileWithName(tilesetName string, tileId uint32, opts *common.DrawOptions) error {
+	ts, err := er.TilesetManager.GetTilesetByName(tilesetName)
+	if err != nil {
+		return err
+	}
+
+	return er.DrawTile(ts, tileId, opts)
+}
+
+func (er *Renderer) DrawAnimatedTile(ts *tsx.Tileset, tileId uint32, opts *common.DrawOptions) error {
 	anim, err := ts.GetTileAnimation(tileId)
 	if err != nil {
 		return err
@@ -78,7 +88,7 @@ func (er *Renderer) DrawAnimatedTile(ts *tsx.Tileset, tileId uint32, opts *DrawO
 	return er.drawTile(ts, frame.ID, opts)
 }
 
-func (er *Renderer) drawTile(ts *tsx.Tileset, tileId uint32, opts *DrawOptions) error {
+func (er *Renderer) drawTile(ts *tsx.Tileset, tileId uint32, opts *common.DrawOptions) error {
 	img, err := er.loadTilesetImage(ts)
 	if err != nil {
 		return err

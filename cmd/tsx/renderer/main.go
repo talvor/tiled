@@ -9,6 +9,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tsx"
 	"github.com/talvor/tiled/tsx/manager"
 	"github.com/talvor/tiled/tsx/renderer"
@@ -74,14 +75,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	moveRight(16, 16)
 
-	walkAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	walkAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 
 	cx := float64(collisionRect1.Min.X) + dx
 	cy := float64(collisionRect1.Min.Y) + dy
 	ebitenutil.DrawRect(screen, cx, cy, float64(collisionRect1.Dx()), float64(collisionRect1.Dy()), color.RGBA{255, 0, 0, 50})
 
 	nextLine(64)
-	runAnimation.DrawAnimation(&renderer.DrawOptions{Screen: screen, Op: op})
+	runAnimation.DrawAnimation(&common.DrawOptions{Screen: screen, Op: op})
 	cx = float64(collisionRect2.Min.X) + dx
 	cy = float64(collisionRect2.Min.Y) + dy
 	ebitenutil.DrawRect(screen, cx, cy, float64(collisionRect2.Dx()), float64(collisionRect2.Dy()), color.RGBA{255, 0, 0, 50})

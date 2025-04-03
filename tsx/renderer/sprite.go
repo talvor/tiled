@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tsx"
 	"github.com/talvor/tiled/tsx/manager"
 )
@@ -17,15 +18,8 @@ var (
 	ErrNoComplexPart     = errors.New("no part found for complex sprite")
 )
 
-type DrawOptions struct {
-	Screen         *ebiten.Image
-	Op             *ebiten.DrawImageOptions
-	FlipHorizontal bool
-	FlipVertical   bool
-}
-
 type SpriteDrawer interface {
-	Draw(id interface{}, opts *DrawOptions) error
+	Draw(id interface{}, opts *common.DrawOptions) error
 }
 
 // A simple sprite is a sprite that is made up of a single tileset
@@ -42,7 +36,7 @@ func NewSimpleSprite(tileSet string, renderer *Renderer) *SimpleSprite {
 	}
 }
 
-func (ss *SimpleSprite) Draw(id interface{}, opts *DrawOptions) error {
+func (ss *SimpleSprite) Draw(id interface{}, opts *common.DrawOptions) error {
 	switch id.(type) {
 	case int:
 		return drawSpriteByID(ss.Tileset, uint32(id.(int)), ss.Renderer, opts)
@@ -54,7 +48,7 @@ func (ss *SimpleSprite) Draw(id interface{}, opts *DrawOptions) error {
 	return fmt.Errorf("invalid id type: %w", ErrInvalidIdType)
 }
 
-func (ss *SimpleSprite) DrawWithAnimation(name string, duration int, opts *DrawOptions) error {
+func (ss *SimpleSprite) DrawWithAnimation(name string, duration int, opts *common.DrawOptions) error {
 	return drawSpriteWithAnimation(ss.Tileset, name, duration, ss.Renderer, opts)
 }
 
@@ -72,7 +66,7 @@ func NewCompoundSprite(tileSets []string, renderer *Renderer) *CompoundSprite {
 	}
 }
 
-func (cs *CompoundSprite) Draw(id interface{}, opts *DrawOptions) error {
+func (cs *CompoundSprite) Draw(id interface{}, opts *common.DrawOptions) error {
 	switch id.(type) {
 	case int:
 		for _, tileset := range cs.Tilesets {
@@ -98,7 +92,7 @@ func (cs *CompoundSprite) Draw(id interface{}, opts *DrawOptions) error {
 	return nil
 }
 
-func (cs *CompoundSprite) DrawWithAnimation(name string, duration int, opts *DrawOptions) error {
+func (cs *CompoundSprite) DrawWithAnimation(name string, duration int, opts *common.DrawOptions) error {
 	for _, tileset := range cs.Tilesets {
 		if err := drawSpriteWithAnimation(tileset, name, duration, cs.Renderer, opts); err != nil {
 			return err
@@ -129,7 +123,7 @@ func (cs *ComplexSprite) AddPart(id uint32, parts []uint32) {
 	cs.Parts[id] = parts
 }
 
-func (cs *ComplexSprite) Draw(id interface{}, opts *DrawOptions) error {
+func (cs *ComplexSprite) Draw(id interface{}, opts *common.DrawOptions) error {
 	ts, err := cs.Renderer.TilesetManager.GetTilesetByName(cs.Tileset)
 	if err != nil {
 		return fmt.Errorf("failed to find tileset with name %s: %w", cs.Tileset, ErrTileset)
@@ -147,7 +141,7 @@ func (cs *ComplexSprite) Draw(id interface{}, opts *DrawOptions) error {
 
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Concat(opts.Op.GeoM)
-	drawOptions := &DrawOptions{
+	drawOptions := &common.DrawOptions{
 		Screen:         opts.Screen,
 		Op:             op,
 		FlipHorizontal: opts.FlipHorizontal,
@@ -183,7 +177,7 @@ func drawSpriteByID(
 	tileset string,
 	ID uint32,
 	renderer *Renderer,
-	opts *DrawOptions,
+	opts *common.DrawOptions,
 ) error {
 	ts, err := renderer.TilesetManager.GetTilesetByName(tileset)
 	if err != nil {
@@ -207,7 +201,7 @@ func drawSpriteByID(
 	return nil
 }
 
-func drawSpriteByName(tileset string, name string, er *Renderer, opts *DrawOptions) error {
+func drawSpriteByName(tileset string, name string, er *Renderer, opts *common.DrawOptions) error {
 	tile, err := getTileByName(tileset, name, er)
 	if err != nil {
 		return err
@@ -216,7 +210,7 @@ func drawSpriteByName(tileset string, name string, er *Renderer, opts *DrawOptio
 	return drawSpriteByID(tileset, tile.ID, er, opts)
 }
 
-func drawSpriteWithAnimation(tileset string, name string, duration int, er *Renderer, opts *DrawOptions) error {
+func drawSpriteWithAnimation(tileset string, name string, duration int, er *Renderer, opts *common.DrawOptions) error {
 	tile, err := getTileByName(tileset, name, er)
 	if err != nil {
 		return err
@@ -249,7 +243,7 @@ func getTileByName(tileset string, name string, er *Renderer) (*tsx.Tile, error)
 	return tile, nil
 }
 
-func transformImage(img *ebiten.Image, opts *DrawOptions) *ebiten.Image {
+func transformImage(img *ebiten.Image, opts *common.DrawOptions) *ebiten.Image {
 	if opts.FlipHorizontal {
 		result := ebiten.NewImage(img.Bounds().Dx(), img.Bounds().Dy())
 		op := &ebiten.DrawImageOptions{}

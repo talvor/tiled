@@ -2,6 +2,7 @@ package renderer
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tmx/manager"
 	tsxrenderer "github.com/talvor/tiled/tsx/renderer"
 )
@@ -18,7 +19,7 @@ func NewRenderer(mm *manager.MapManager, tsxRenderer *tsxrenderer.Renderer) *Ren
 	}
 }
 
-func (r *Renderer) DrawMapLayer(mapName string, layerName string, opts *DrawOptions) error {
+func (r *Renderer) DrawMapLayer(mapName string, layerName string, opts *common.DrawOptions) error {
 	m, err := r.MapManager.GetMapByName(mapName)
 	if err != nil {
 		return err
@@ -41,7 +42,7 @@ func (r *Renderer) DrawMapLayer(mapName string, layerName string, opts *DrawOpti
 		op.GeoM.Concat(opts.Op.GeoM)
 		op.GeoM.Translate(float64(posX), float64(posY))
 
-		if err := r.TsxRenderer.DrawTileWithSource(ts.Source, uint32(id), &tsxrenderer.DrawOptions{
+		if err := r.TsxRenderer.DrawTileWithSource(ts.Source, uint32(id), &common.DrawOptions{
 			Screen: opts.Screen,
 			Op:     op,
 		}); err != nil {
@@ -49,11 +50,4 @@ func (r *Renderer) DrawMapLayer(mapName string, layerName string, opts *DrawOpti
 		}
 	}
 	return nil
-}
-
-type DrawOptions struct {
-	Screen         *ebiten.Image
-	Op             *ebiten.DrawImageOptions
-	FlipHorizontal bool
-	FlipVertical   bool
 }

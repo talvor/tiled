@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/talvor/tiled/common"
 	tmxmanager "github.com/talvor/tiled/tmx/manager"
 	tmxrenderer "github.com/talvor/tiled/tmx/renderer"
 	tsxmanager "github.com/talvor/tiled/tsx/manager"
@@ -37,7 +38,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{120, 180, 255, 255})
 
 	opts := &ebiten.DrawImageOptions{}
-	op := &tmxrenderer.DrawOptions{Screen: screen, Op: opts}
+	op := &common.DrawOptions{Screen: screen, Op: opts}
 
 	tmxr.DrawMapLayer("StartScene", "background", op)
 	tmxr.DrawMapLayer("StartScene", "bottom", op)

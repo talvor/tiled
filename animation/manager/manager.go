@@ -1,15 +1,17 @@
 package manager
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/talvor/tiled/animation"
 	tsxm "github.com/talvor/tiled/tsx/manager"
-	renderer "github.com/talvor/tiled/tsx/renderer"
 	tsxr "github.com/talvor/tiled/tsx/renderer"
 )
+
+var ErrAnimationNotFound = errors.New("animation not found")
 
 type AnimationManager struct {
 	baseDir    string
@@ -18,11 +20,21 @@ type AnimationManager struct {
 	TSRenderer *tsxr.Renderer
 }
 
+func (am *AnimationManager) GetAnimation(class string, action string) (*animation.Animation, error) {
+	name := makeAnimationName(class, action)
+	ani, ok := am.Animations[name]
+	if !ok {
+		return nil, fmt.Errorf("%w class:%s action:%s", class, action, ErrAnimationNotFound)
+	}
+
+	return ani, nil
+}
+
 func (am *AnimationManager) SetTilesetManager(tsManager *tsxm.TilesetManager) {
 	am.TSManager = tsManager
 }
 
-func (am *AnimationManager) SetRenderer(renderer *renderer.Renderer) {
+func (am *AnimationManager) SetRenderer(renderer *tsxr.Renderer) {
 	am.TSRenderer = renderer
 }
 
@@ -57,7 +69,8 @@ func loadAnimations(am *AnimationManager, baseDir string) error {
 		}
 
 		for _, animation := range animations.Animations {
-			am.Animations[animation.Class] = animation
+			name := makeAnimationName(animation.Class, animation.Action)
+			am.Animations[name] = animation
 		}
 	}
 
@@ -81,4 +94,8 @@ func findANIFiles(dir string) ([]string, error) {
 	}
 
 	return aniFiles, nil
+}
+
+func makeAnimationName(class string, action string) string {
+	return fmt.Sprintf("%s_%s", class, action)
 }

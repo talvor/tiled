@@ -11,7 +11,7 @@ import (
 
 func main() {
 	homeDir, _ := os.UserHomeDir()
-	animationPath := path.Join(homeDir, "Documents/examples/animations/animations.ani")
+	animationPath := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/animations/animations.ani")
 
 	a, err := animation.LoadFile(animationPath)
 	if err != nil {
