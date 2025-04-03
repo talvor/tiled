@@ -57,17 +57,34 @@ See `cmd/animation/renderer/main.go` for an example of using the renderer
 
 The _animation_ file format use YAML to define a set of animations.
 
-The yaml file must have a top level field
+The yaml file must have a top level fields
 
+- tileset_groups: A list of tileset groups
 - animations: This is a list of animations
+
+### tileset_group
+
+Each tileset group has the following properties
+
+- name: Name of the tileset group. Used to reference the tileset group inside an animation, so must be unique.
+- tilesets: An ordered list of tilesets required to render the animation.
+
+### animation
 
 Each animation has the following properties
 
 - class: A key used to group a number of animations together. Eg. all animations for the "player" sprite
 - action: A secondary key used to signify what the animation is for. The combination of `class` and `action` should be unique
+
+And one of, "tileset_group" and/or "tilesets". If both are provided, the "tilesets" list is appened to the end of the
+tileset list referenced by the tileset_group
+
+- tileset_group: A group of tilesets required to render the animation.
 - tilesets: An ordered list of tilesets required to render the animation.
 
 And then one of the animation types "simple", "timed" or "complex"
+
+#### simple animation
 
 - simple: Defines an animation where each frame renders the same tile from each tileset. The duration is set for the animation.
 
@@ -79,6 +96,8 @@ And then one of the animation types "simple", "timed" or "complex"
     - y_offset: Will cause each frame to be rendered offset on the y axis
   - frames: Ordered list of tile id's
 
+#### complex animation
+
 - timed: Defines an animation where each frame renders the same tile from each tileset. The duration is set for each frame.
 
   - defaults:
@@ -89,6 +108,8 @@ And then one of the animation types "simple", "timed" or "complex"
   - frames: Ordered list of frames
     - id: tile id
     - duration: duration this frame will be rendered
+
+#### complex animation
 
 - complex: Defines an animation where each frame is made up of parts.
   - frames: Ordered list of frames
