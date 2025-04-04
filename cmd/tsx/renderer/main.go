@@ -29,7 +29,7 @@ func init() {
 	homeDir, _ := os.UserHomeDir()
 	tilesetsDir := path.Join(homeDir, "Downloads/mana_seed_character_base/character")
 	tm := manager.NewManager([]string{tilesetsDir})
-	bodyTileset, _ = tm.GetTilesetByName("char_a_p1_0bas_humn_v01")
+	bodyTileset = tm.GetTilesetByName("char_a_p1_0bas_humn_v01")
 	collisionRect1, _ = bodyTileset.GetTileCollisionRect(48, "collider")
 	collisionRect2, _ = bodyTileset.GetTileCollisionRect(49, "full_tile_collider")
 	r = renderer.NewRenderer(tm)
@@ -39,7 +39,7 @@ func init() {
 		// "char_a_p1_1out_undi_v01",
 		"char_a_p1_1out_pfpn_v04",
 		"char_a_p1_4har_dap1_v01",
-		"char_a_p1_5hat_pnty_v04",
+		// "char_a_p1_5hat_pnty_v04",
 	}, r)
 	walkAnimation = renderer.NewSimpleAnimation(compoundSprite, 135, []int{48, 49, 50, 51, 52, 53}, nil)
 	runAnimation, _ = renderer.NewTimedAnimation(compoundSprite, []int{48, 49, 54, 51, 52, 55}, []uint32{80, 55, 125, 80, 55, 125}, nil)

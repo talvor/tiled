@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	anim "github.com/talvor/tiled/animation/manager"
 	"github.com/talvor/tiled/animation/renderer"
 	"github.com/talvor/tiled/common"
@@ -26,6 +27,8 @@ func init() {
 	tsxr := tsxr.NewRenderer(tsxm)
 	anim := anim.NewManager([]string{animationsDir})
 	anir = renderer.NewRenderer(anim, tsxr)
+
+	anir.SetTilesetResolver(tsxr.TilesetManager)
 }
 
 type Game struct{}
@@ -58,6 +61,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	moveRight(16, 16)
 
 	// Draw animation
+	collider := anir.GetCollider("simple_player", "walking", "collider")
+	cx := float64(collider.Min.X) + dx
+	cy := float64(collider.Min.Y) + dy
+	ebitenutil.DrawRect(screen, cx, cy, float64(collider.Dx()), float64(collider.Dy()), color.RGBA{255, 0, 0, 25})
 	panicOnError(anir.Draw("simple_player", "walking", &common.DrawOptions{
 		Screen: screen,
 		Op:     op,
@@ -79,6 +86,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	moveRight(48, 0)
 
+	collider = anir.GetCollider("complex_player", "chop", "collider")
+	cx = float64(collider.Min.X) + dx
+	cy = float64(collider.Min.Y) + dy - 8
+	ebitenutil.DrawRect(screen, cx, cy, float64(collider.Dx()), float64(collider.Dy()), color.RGBA{255, 0, 0, 25})
 	panicOnError(anir.Draw("complex_player", "chop", &common.DrawOptions{
 		Screen: screen,
 		Op:     op,

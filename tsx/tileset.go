@@ -52,7 +52,7 @@ func (ts *Tileset) GetTileRect(tileID uint32) (image.Rectangle, error) {
 }
 
 // GetTileCollisionRect returns the collision rectangle of a tile in the tileset.
-// The collision is determined by an Object inside the tiles ObjectGroup or by the tile itself.
+// The collision is determined by an Object inside the tiles ObjectGroup.
 func (ts *Tileset) GetTileCollisionRect(tileID uint32, collisionObjectName string) (image.Rectangle, error) {
 	if tileID >= uint32(ts.TileCount) {
 		return image.Rectangle{}, ErrTileIDOutOfBounds
@@ -68,7 +68,7 @@ func (ts *Tileset) GetTileCollisionRect(tileID uint32, collisionObjectName strin
 			}
 		}
 	}
-	return image.Rect(0, 0, ts.TileWidth, ts.TileHeight), nil
+	return image.Rectangle{}, nil
 }
 
 func (ts *Tileset) GetTileByType(tileType string) (*Tile, error) {

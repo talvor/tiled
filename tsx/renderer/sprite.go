@@ -124,8 +124,8 @@ func (cs *ComplexSprite) AddPart(id uint32, parts []uint32) {
 }
 
 func (cs *ComplexSprite) Draw(id interface{}, opts *common.DrawOptions) error {
-	ts, err := cs.Renderer.TilesetManager.GetTilesetByName(cs.Tileset)
-	if err != nil {
+	ts := cs.Renderer.TilesetManager.GetTilesetByName(cs.Tileset)
+	if ts == nil {
 		return fmt.Errorf("failed to find tileset with name %s: %w", cs.Tileset, ErrTileset)
 	}
 
@@ -169,7 +169,7 @@ func (cs *ComplexSprite) Draw(id interface{}, opts *common.DrawOptions) error {
 	return nil
 }
 
-func getTileset(tileset string, tilesetManager *manager.TilesetManager) (*tsx.Tileset, error) {
+func getTileset(tileset string, tilesetManager *manager.TilesetManager) *tsx.Tileset {
 	return tilesetManager.GetTilesetByName(tileset)
 }
 
@@ -179,8 +179,8 @@ func drawSpriteByID(
 	renderer *Renderer,
 	opts *common.DrawOptions,
 ) error {
-	ts, err := renderer.TilesetManager.GetTilesetByName(tileset)
-	if err != nil {
+	ts := renderer.TilesetManager.GetTilesetByName(tileset)
+	if ts == nil {
 		return fmt.Errorf("failed to find tileset with name %s: %w", tileset, ErrTileset)
 	}
 
@@ -230,8 +230,8 @@ func drawSpriteWithAnimation(tileset string, name string, duration int, er *Rend
 }
 
 func getTileByName(tileset string, name string, er *Renderer) (*tsx.Tile, error) {
-	ts, err := er.TilesetManager.GetTilesetByName(tileset)
-	if err != nil {
+	ts := er.TilesetManager.GetTilesetByName(tileset)
+	if ts == nil {
 		return nil, fmt.Errorf("failed to find tileset with name %s: %w", tileset, ErrTileset)
 	}
 

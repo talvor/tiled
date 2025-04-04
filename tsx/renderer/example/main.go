@@ -44,9 +44,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(16, 16)
 
 	// Draw all tiles from tileset
-	ts, err := r.TilesetManager.GetTilesetByName(simpleSprite.Tileset)
-	if err != nil {
-		panic(err)
+	ts := r.TilesetManager.GetTilesetByName(simpleSprite.Tileset)
+	if ts == nil {
+		log.Fatal("Tileset not found")
 	}
 	columns := ts.Columns
 	rows := ts.TileCount / columns

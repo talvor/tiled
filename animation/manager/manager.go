@@ -10,11 +10,15 @@ import (
 	"github.com/talvor/tiled/common"
 )
 
-var ErrAnimationNotFound = errors.New("animation not found")
+var (
+	ErrAnimationNotFound    = errors.New("manager: animation not found")
+	ErrTilesetGroupNotFound = errors.New("manager: tileset group not found")
+)
 
 type AnimationManager struct {
-	baseDir    string
-	Animations map[string]*animation.Animation
+	baseDir       string
+	Animations    map[string]*animation.Animation
+	TilesetGroups map[string]*animation.TilesetGroup
 }
 
 func (am *AnimationManager) GetAnimation(class string, action string) (*animation.Animation, error) {
@@ -27,6 +31,14 @@ func (am *AnimationManager) GetAnimation(class string, action string) (*animatio
 	return ani, nil
 }
 
+func (am *AnimationManager) GetTilesetGroup(name string) (*animation.TilesetGroup, error) {
+	group, ok := am.TilesetGroups[name]
+	if !ok {
+		return nil, fmt.Errorf("group: %s %w", name, ErrTilesetGroupNotFound)
+	}
+	return group, nil
+}
+
 func (am *AnimationManager) DebugPrintAnimations() {
 	for name := range am.Animations {
 		fmt.Println(name)
@@ -35,7 +47,8 @@ func (am *AnimationManager) DebugPrintAnimations() {
 
 func NewManager(baseDirs []string) *AnimationManager {
 	am := &AnimationManager{
-		Animations: make(map[string]*animation.Animation),
+		Animations:    make(map[string]*animation.Animation),
+		TilesetGroups: make(map[string]*animation.TilesetGroup),
 	}
 
 	// Load animations from the base directories
@@ -67,6 +80,10 @@ func loadAnimations(am *AnimationManager, baseDir string) error {
 		for _, animation := range animations.Animations {
 			name := makeAnimationName(animation.Class, animation.Action)
 			am.Animations[name] = animation
+		}
+
+		for _, group := range animations.TilesetGroups {
+			am.TilesetGroups[group.Name] = group
 		}
 	}
 

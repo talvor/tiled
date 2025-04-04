@@ -35,10 +35,7 @@ func (er *Renderer) MakeSprite(tileset interface{}) SpriteDrawer {
 }
 
 func (er *Renderer) DrawTilesetByName(name string, screen *ebiten.Image, op *ebiten.DrawImageOptions) error {
-	ts, err := er.TilesetManager.GetTilesetByName(name)
-	if err != nil {
-		return err
-	}
+	ts := er.TilesetManager.GetTilesetByName(name)
 
 	img, err := er.loadTilesetImage(ts)
 	if err != nil {
@@ -58,19 +55,13 @@ func (er *Renderer) DrawTile(ts *tsx.Tileset, tileId uint32, opts *common.DrawOp
 }
 
 func (er *Renderer) DrawTileWithSource(tilesetSource string, tileId uint32, opts *common.DrawOptions) error {
-	ts, err := er.TilesetManager.GetTilesetBySource(tilesetSource)
-	if err != nil {
-		return err
-	}
+	ts := er.TilesetManager.GetTilesetBySource(tilesetSource)
 
 	return er.DrawTile(ts, tileId, opts)
 }
 
 func (er *Renderer) DrawTileWithName(tilesetName string, tileId uint32, opts *common.DrawOptions) error {
-	ts, err := er.TilesetManager.GetTilesetByName(tilesetName)
-	if err != nil {
-		return err
-	}
+	ts := er.TilesetManager.GetTilesetByName(tilesetName)
 
 	return er.DrawTile(ts, tileId, opts)
 }

@@ -22,20 +22,30 @@ type TilesetManager struct {
 	TilesetGroups    map[string]tsx.TilesetGroup
 }
 
-func (tm *TilesetManager) GetTilesetBySource(source string) (*tsx.Tileset, error) {
-	if _, ok := tm.TilesetsBySource[source]; !ok {
-		return nil, fmt.Errorf("source: %s %w", source, ErrTilesetNotFound)
+func (tm *TilesetManager) GetTilesets(names []string) []*tsx.Tileset {
+	var tilesets []*tsx.Tileset
+	for _, n := range names {
+		if ts, ok := tm.TilesetsByName[n]; ok {
+			tilesets = append(tilesets, ts)
+		}
 	}
-
-	return tm.TilesetsBySource[source], nil
+	return tilesets
 }
 
-func (tm *TilesetManager) GetTilesetByName(name string) (*tsx.Tileset, error) {
-	if _, ok := tm.TilesetsByName[name]; !ok {
-		return nil, fmt.Errorf("name: %s %w", name, ErrTilesetNotFound)
+func (tm *TilesetManager) GetTilesetBySource(source string) *tsx.Tileset {
+	if _, ok := tm.TilesetsBySource[source]; !ok {
+		return nil
 	}
 
-	return tm.TilesetsByName[name], nil
+	return tm.TilesetsBySource[source]
+}
+
+func (tm *TilesetManager) GetTilesetByName(name string) *tsx.Tileset {
+	if _, ok := tm.TilesetsByName[name]; !ok {
+		return nil
+	}
+
+	return tm.TilesetsByName[name]
 }
 
 func (tm *TilesetManager) HasTilesetByName(name string) bool {
@@ -70,7 +80,7 @@ func (tm *TilesetManager) AddTilesetGroupBySource(name string, sources []string)
 	var tilesets tsx.TilesetGroup
 	for _, source := range sources {
 		var ts *tsx.Tileset
-		ts, _ = tm.GetTilesetBySource(source)
+		ts = tm.GetTilesetBySource(source)
 		if ts == nil {
 			var err error
 			ts, err = tm.AddTileset(source)
@@ -89,10 +99,7 @@ func (tm *TilesetManager) AddTilesetGroupBySource(name string, sources []string)
 func (tm *TilesetManager) AddTilesetGroup(name string, names []string) error {
 	var tilesets tsx.TilesetGroup
 	for _, name := range names {
-		ts, err := tm.GetTilesetByName(name)
-		if err != nil {
-			return err
-		}
+		ts := tm.GetTilesetByName(name)
 		tilesets = append(tilesets, ts)
 	}
 

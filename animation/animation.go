@@ -1,6 +1,7 @@
 package animation
 
 import (
+	"image"
 	"io"
 	"os"
 	"path/filepath"
@@ -34,11 +35,25 @@ type Animation struct {
 	Timed        *timed   `yaml:"timed,omitempty" json:"timed,omitempty"`
 	Complex      *complex `yaml:"complex,omitempty" json:"complex,omitempty"`
 
+	ColliderRect  *image.Rectangle
 	currentFrame  int
 	nextFrameTime int64
 }
 
+func (a *Animation) GetTileID(part int) int {
+	frame := a.Frames[a.currentFrame]
+
+	if part < 0 || part >= len(frame.Parts) {
+		return -1
+	}
+	return frame.Parts[part].TileID
+}
+
 func (a *Animation) GetCurrentFrame() Frame {
+	return a.Frames[a.currentFrame]
+}
+
+func (a *Animation) GetNextFrame() Frame {
 	a.determineFrame()
 	return a.Frames[a.currentFrame]
 }
