@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tsx"
 )
 
@@ -16,7 +17,6 @@ var (
 )
 
 type TilesetManager struct {
-	baseDir          string
 	TilesetsByName   map[string]*tsx.Tileset
 	TilesetsBySource map[string]*tsx.Tileset
 	TilesetGroups    map[string]tsx.TilesetGroup
@@ -119,19 +119,26 @@ func (tm *TilesetManager) DebugPrintTilesets() {
 	}
 }
 
-func NewManager(baseDir string) (*TilesetManager, error) {
+func NewManager(baseDirs []string) *TilesetManager {
 	tm := &TilesetManager{
-		baseDir:          baseDir,
 		TilesetsByName:   make(map[string]*tsx.Tileset),
 		TilesetsBySource: make(map[string]*tsx.Tileset),
 		TilesetGroups:    make(map[string]tsx.TilesetGroup),
 	}
 
-	if err := loadTilesets(tm, baseDir); err != nil {
-		return nil, err
+	// Load tilesets from the base directories
+	for _, baseDir := range baseDirs {
+		if err := common.PathShouldBeDirectory(baseDir); err != nil {
+			fmt.Printf("Error: %s %v\n", baseDir, err)
+			continue
+		}
+
+		if err := loadTilesets(tm, baseDir); err != nil {
+			fmt.Printf("Error loading tilesets from %s: %v\n", baseDir, err)
+		}
 	}
 
-	return tm, nil
+	return tm
 }
 
 func loadTilesets(tm *TilesetManager, baseDir string) error {

@@ -21,13 +21,11 @@ func init() {
 	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/tiles")
 	mapsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/maps")
 
-	tm, err := tsxmanager.NewManager(tilesetsDir)
-	panicOnError(err)
+	tm := tsxmanager.NewManager([]string{tilesetsDir})
 	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/outdoorDecorations/"))
 	tm.LoadTilesetsFromDir(path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/crops/"))
 
-	mm, err := tmxmanager.NewManager(mapsDir)
-	panicOnError(err)
+	mm := tmxmanager.NewManager([]string{mapsDir})
 
 	tsxr := tsxrenderer.NewRenderer(tm)
 	tmxr = tmxrenderer.NewRenderer(mm, tsxr)

@@ -28,7 +28,7 @@ var (
 func init() {
 	homeDir, _ := os.UserHomeDir()
 	tilesetsDir := path.Join(homeDir, "Downloads/mana_seed_character_base/character")
-	tm, _ := manager.NewManager(tilesetsDir)
+	tm := manager.NewManager([]string{tilesetsDir})
 	bodyTileset, _ = tm.GetTilesetByName("char_a_p1_0bas_humn_v01")
 	collisionRect1, _ = bodyTileset.GetTileCollisionRect(48, "collider")
 	collisionRect2, _ = bodyTileset.GetTileCollisionRect(49, "full_tile_collider")

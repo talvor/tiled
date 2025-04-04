@@ -15,14 +15,8 @@ import (
 var tmxr *tmxrenderer.Renderer
 
 func init() {
-	tm, err := tsxmanager.NewManager("./assets/")
-	if err != nil {
-		log.Fatal(err)
-	}
-	mm, err := tmxmanager.NewManager("./assets/")
-	if err != nil {
-		log.Fatal(err)
-	}
+	tm := tsxmanager.NewManager([]string{"./assets/"})
+	mm := tmxmanager.NewManager([]string{"./assets/"})
 
 	tsxr := tsxrenderer.NewRenderer(tm)
 	tmxr = tmxrenderer.NewRenderer(mm, tsxr)

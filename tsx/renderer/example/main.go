@@ -21,8 +21,8 @@ var (
 
 func init() {
 	_, filename, _, _ := runtime.Caller(0)
-	tm, err := manager.NewManager(path.Join(path.Dir(filename), "tilesets"))
-	panicOnError(err)
+	tilesetDir := path.Join(path.Dir(filename), "tilesets")
+	tm := manager.NewManager([]string{tilesetDir})
 
 	r = renderer.NewRenderer(tm)
 	simpleSprite = renderer.NewSimpleSprite("player", r)

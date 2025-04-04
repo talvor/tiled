@@ -9,39 +9,24 @@ import (
 	tsxr "github.com/talvor/tiled/tsx/renderer"
 )
 
-func NewAnimationRenderer(animationBaseDir string, tilesetBaseDir string) (*anir.Renderer, error) {
-	am, err := anim.NewManager(animationBaseDir)
-	if err != nil {
-		return nil, err
-	}
-	tsm, err := tsxm.NewManager(tilesetBaseDir)
-	if err != nil {
-		return nil, err
-	}
+func NewAnimationRenderer(animationBaseDirs []string, tilesetBaseDirs []string) *anir.Renderer {
+	am := anim.NewManager(animationBaseDirs)
+	tsm := tsxm.NewManager(tilesetBaseDirs)
 	tsr := tsxr.NewRenderer(tsm)
 
-	return anir.NewRenderer(am, tsr), nil
+	return anir.NewRenderer(am, tsr)
 }
 
-func NewTilesetRenderer(tilesetBaseDir string) (*tsxr.Renderer, error) {
-	ts, err := tsxm.NewManager(tilesetBaseDir)
-	if err != nil {
-		return nil, err
-	}
-	return tsxr.NewRenderer(ts), nil
+func NewTilesetRenderer(tilesetBaseDirs []string) *tsxr.Renderer {
+	ts := tsxm.NewManager(tilesetBaseDirs)
+	return tsxr.NewRenderer(ts)
 }
 
-func NewMapRenderer(mapBaseDir string, tilesetBaseDir string) (*tmxr.Renderer, error) {
-	ts, err := tsxm.NewManager(tilesetBaseDir)
-	if err != nil {
-		return nil, err
-	}
+func NewMapRenderer(mapBaseDirs []string, tilesetBaseDirs []string) *tmxr.Renderer {
+	ts := tsxm.NewManager(tilesetBaseDirs)
 
-	mm, err := tmxm.NewManager(mapBaseDir)
-	if err != nil {
-		return nil, err
-	}
+	mm := tmxm.NewManager(mapBaseDirs)
 
 	tsr := tsxr.NewRenderer(ts)
-	return tmxr.NewRenderer(mm, tsr), nil
+	return tmxr.NewRenderer(mm, tsr)
 }

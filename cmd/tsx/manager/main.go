@@ -12,12 +12,7 @@ func main() {
 	homeDir, _ := os.UserHomeDir()
 	tilesetsDir := path.Join(homeDir, "Documents/examples/tilesets")
 	otherTilesetDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/")
-	tm, err := manager.NewManager(tilesetsDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tm.LoadTilesetsFromDir(otherTilesetDir)
+	tm := manager.NewManager([]string{tilesetsDir, otherTilesetDir})
 
 	tm.AddTilesetGroup("player", []string{
 		"Player_Base_Running",
