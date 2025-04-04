@@ -10,9 +10,6 @@ import (
 func main() {
 	homeDir, _ := os.UserHomeDir()
 	animationsDir := path.Join(homeDir, "Documents/examples/animations")
-	am, err := manager.NewManager(animationsDir)
-	if err != nil {
-		panic(err)
-	}
+	am := manager.NewManager([]string{animationsDir})
 	am.DebugPrintAnimations()
 }

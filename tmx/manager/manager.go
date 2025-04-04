@@ -6,25 +6,17 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/talvor/tiled/common"
 	"github.com/talvor/tiled/tmx"
 )
 
-var (
-	ErrMapManagerNotLoaded = errors.New("tsx: map manager not loaded")
-	ErrMapNotFound         = errors.New("tsx: map not found")
-)
+var ErrMapNotFound = errors.New("tsx: map not found")
 
 type MapManager struct {
-	baseDir  string
-	Maps     map[string]*tmx.Map
-	IsLoaded bool
+	Maps map[string]*tmx.Map
 }
 
 func (mm *MapManager) GetMapByName(name string) (*tmx.Map, error) {
-	if !mm.IsLoaded {
-		return nil, ErrMapManagerNotLoaded
-	}
-
 	if m, ok := mm.Maps[name]; ok {
 		return m, nil
 	}
@@ -42,36 +34,41 @@ func (mm *MapManager) DebugPrintMaps() {
 	}
 }
 
-func NewManager(baseDir string) (*MapManager, error) {
+func NewManager(baseDirs []string) *MapManager {
 	mm := &MapManager{
-		baseDir:  baseDir,
-		Maps:     make(map[string]*tmx.Map),
-		IsLoaded: false,
+		Maps: make(map[string]*tmx.Map),
 	}
 
-	if err := loadMaps(mm, baseDir); err != nil {
-		return nil, err
+	// Load maps from the base directories
+	for _, baseDir := range baseDirs {
+		if err := common.PathShouldBeDirectory(baseDir); err != nil {
+			fmt.Printf("Error: %s %v\n", baseDir, err)
+			continue
+		}
+
+		if err := loadMaps(mm, baseDir); err != nil {
+			fmt.Printf("Error loading maps from %s: %v\n", baseDir, err)
+		}
 	}
 
-	return mm, nil
+	return mm
 }
 
 func loadMaps(mm *MapManager, baseDir string) error {
 	tmxFiles, err := findTMXFiles(baseDir)
 	if err != nil {
-		return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
+		return fmt.Errorf("error loading maps: %s %w", baseDir, err)
 	}
 
 	for _, tmxFile := range tmxFiles {
 		t, err := tmx.LoadFile(tmxFile)
 		if err != nil {
-			return fmt.Errorf("error loading maps: %s %w", mm.baseDir, err)
+			return fmt.Errorf("error loading maps: %s %w", baseDir, err)
 		}
 
 		mm.Maps[t.Class] = t
 	}
 
-	mm.IsLoaded = true
 	return nil
 }
 

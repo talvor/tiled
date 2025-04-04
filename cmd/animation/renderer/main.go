@@ -21,12 +21,10 @@ func init() {
 	tilesetsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/sprites")
 	animationsDir := path.Join(homeDir, "Documents/tilesets/Cute_Fantasy/animations")
 
-	tsxm, err := tsxm.NewManager(tilesetsDir)
-	panicOnError(err)
+	tsxm := tsxm.NewManager([]string{tilesetsDir})
 
 	tsxr := tsxr.NewRenderer(tsxm)
-	anim, err := anim.NewManager(animationsDir)
-	panicOnError(err)
+	anim := anim.NewManager([]string{animationsDir})
 	anir = renderer.NewRenderer(anim, tsxr)
 }
 

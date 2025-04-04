@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/talvor/tiled/animation"
+	"github.com/talvor/tiled/common"
 )
 
 var ErrAnimationNotFound = errors.New("animation not found")
@@ -32,17 +33,24 @@ func (am *AnimationManager) DebugPrintAnimations() {
 	}
 }
 
-func NewManager(baseDir string) (*AnimationManager, error) {
+func NewManager(baseDirs []string) *AnimationManager {
 	am := &AnimationManager{
-		baseDir:    baseDir,
 		Animations: make(map[string]*animation.Animation),
 	}
 
-	if err := loadAnimations(am, baseDir); err != nil {
-		return nil, err
+	// Load animations from the base directories
+	for _, baseDir := range baseDirs {
+		if err := common.PathShouldBeDirectory(baseDir); err != nil {
+			fmt.Printf("Error: %s %v\n", baseDir, err)
+			continue
+		}
+
+		if err := loadAnimations(am, baseDir); err != nil {
+			fmt.Printf("Error loading animations from %s: %v\n", baseDir, err)
+		}
 	}
 
-	return am, nil
+	return am
 }
 
 func loadAnimations(am *AnimationManager, baseDir string) error {
